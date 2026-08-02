@@ -41,6 +41,7 @@ INSTALLED_APPS = [
 
     
     'website',
+    'accounts',
 ]
 
 MIDDLEWARE = [
@@ -150,6 +151,10 @@ EMAIL_USE_SSL = config("EMAIL_USE_SSL",cast=bool,default=False)
 EMAIL_PORT = config("EMAIL_PORT",cast=int,default=25)
 EMAIL_HOST_USER = config("EMAIL_HOST_USER",default="")
 EMAIL_HOST_PASSWORD = config("EMAIL_HOST_PASSWORD",default="")
+DEFAULT_FROM_EMAIL = config(
+    "DEFAULT_FROM_EMAIL",
+    default="noreply@example.com"
+)
 
 
 # django debug toolbar for docker usage
@@ -164,3 +169,30 @@ if SHOW_DEBUGGER_TOOLBAR:
     import socket  # only if you haven't already imported this
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
     INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + ["127.0.0.1", "10.0.2.2"]
+
+
+AUTH_USER_MODEL = "accounts.User"
+LOGIN_REDIRECT_URL = "/"
+LOGOUT_REDIRECT_URL = "/"
+
+
+# ==========================================
+# Celery Configuration
+# ==========================================
+
+CELERY_BROKER_URL = config("CELERY_BROKER_URL")
+
+CELERY_RESULT_BACKEND = config("CELERY_RESULT_BACKEND")
+
+CELERY_ACCEPT_CONTENT = ["json"]
+
+CELERY_TASK_SERIALIZER = "json"
+
+CELERY_RESULT_SERIALIZER = "json"
+
+CELERY_TIMEZONE = TIME_ZONE
+
+
+
+# Password Reset Token Timeout (48 hours)
+PASSWORD_RESET_TIMEOUT = 60 * 60 * 48
