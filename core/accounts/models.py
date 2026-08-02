@@ -59,11 +59,11 @@ class User(AbstractBaseUser,PermissionsMixin):
     Custom User Model for our app
     """
     email = models.EmailField(_("email address"),unique=True)
-    # is_superuser = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_active = models.BooleanField(default=True)
     is_verified = models.BooleanField(default=False)
-    type = models.ImageField(choices=UserType.choices,default=UserType.customer.value)
+    type = models.IntegerField(choices=UserType.choices,default=UserType.customer.value)
 
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
@@ -86,3 +86,10 @@ class Profile(models.Model):
 
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
+
+
+
+@receiver(post_save,sender=User)
+def create_profile(sender,instance,created,**kwargs):
+    if created and instance.type == UserType.customer.value:
+        Profile.objects.create(user=instance, pk=instance.pk)
