@@ -10,7 +10,7 @@ class Command(BaseCommand):
     help = "Generate fake categories"
 
     def handle(self, *args, **options):
-        fake = Faker()
+        fake = Faker(locale="fa_IR")
 
         created = 0
 

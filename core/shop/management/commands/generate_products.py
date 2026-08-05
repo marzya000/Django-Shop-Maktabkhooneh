@@ -30,7 +30,7 @@ class Command(BaseCommand):
     ]
 
     def handle(self, *args, **options):
-        fake = Faker()
+        fake = Faker(locale="fa_IR")
 
         users = list(User.objects.all())
         categories = list(ProductCategoryModel.objects.all())
@@ -44,7 +44,7 @@ class Command(BaseCommand):
             return
 
         for _ in range(10):
-            title = fake.unique.sentence(nb_words=3).replace(".", "")
+            title = ' '.join([fake.word() for _ in range(1,3)])
             slug = slugify(title, allow_unicode=True)
             selected_image = random.choice(self.IMAGE_LIST)
             image_obj = File(file=open(BASE_DIR / selected_image,"rb"),name=Path(selected_image).name)
@@ -54,7 +54,8 @@ class Command(BaseCommand):
                 title=title,
                 slug=slug,
                 image=image_obj,
-                description=fake.paragraph(nb_sentences=5),
+                description=fake.paragraph(nb_sentences=10),
+                brief_description=fake.paragraph(nb_sentences=1),
                 stock=random.randint(0, 10),
                 status=random.choice(ProductStatusType.values),
                 price=random.randint(10000, 100000),
