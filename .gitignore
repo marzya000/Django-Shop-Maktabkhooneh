@@ -184,3 +184,8 @@ cython_debug/
 
 # ignore database files
 postgres/data/*
+
+
+#
+core/media/*
+!core/media/.gitkeep
