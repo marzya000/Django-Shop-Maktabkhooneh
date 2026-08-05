@@ -344,7 +344,7 @@
                 {% endfor %}
               </div>
 
-              <h4 class="card-title"><a class="text-dark" href="#">{{object.title}}</a></h4>
+              <h4 class="card-title"><a class="text-dark" href="{% url 'shop:product-detail' slug=object.slug %}">{{object.title}}</a></h4>
               <p class="card-text text-dark">{{object.get_show_price}} تومان</p>
             </div>
 
@@ -387,13 +387,15 @@
           {{page_obj.page_range}}
           {% for i in page_obj.paginator.page_range %}
           {% if page_obj.number == i %}
+
           <li class="page-item active">
             <a class="page-link">{{ i }}</a>
           </li>
-          {% else %}          
-           <li class="page-item">
+          
+          {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+          <li class="page-item">
             <a class="page-link" href="?page={{ i }}">{{i}}</a>
-          </li>
+          </li>          
           {% endif %}
           {% endfor %}
           
