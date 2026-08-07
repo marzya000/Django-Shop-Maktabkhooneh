@@ -1,0 +1,6 @@
+File Name: jquery.min.js
+Library: jQuery
+Version: 3.7.1
+Type: Minified
+Source: https://jquery.com/
+Downloaded: 2026-08-07
