@@ -37,7 +37,7 @@
     <div class="container">
       <nav class="js-mega-menu navbar-nav-wrap">
         <!-- Default Logo -->
-        <a class="navbar-brand" href="/index.html" aria-label="Front">
+        <a class="navbar-brand" href="{% url 'website:index' %}" aria-label="Front">
           <img class="navbar-brand-logo" src="{% static 'svg/logos/logo.svg' %}" alt="Logo">
         </a>
         <!-- End Default Logo -->
@@ -137,7 +137,7 @@
         <div class="col-lg-3 mb-5">
           <div class="d-flex align-items-start flex-column h-100">
             <!-- Logo -->
-            <a class="w-100 mb-3 mb-lg-auto" href="/index.html" aria-label="Front">
+            <a class="w-100 mb-3 mb-lg-auto" href="{% url 'website:index' %}" aria-label="Front">
               <img class="brand" src="{% static 'svg/logos/logo.svg' %}" alt="Logo">
             </a>
             <!-- End Logo -->
@@ -308,14 +308,14 @@
 
           <div class="mb-7">
             <!-- Form -->
-            <form>
+            <form action="{% url 'shop:product-grid' %}">
               <!-- Input Card -->
               <div class="input-card">
                 <div class="input-card-form">
-                  <input type="text" class="form-control form-control-lg" placeholder="جستجو محصولات"
+                  <input type="text" class="form-control form-control-lg" placeholder="جستجو محصولات" name="q"
                     aria-label="جستجو محصولات">
                 </div>
-                <button type="button" class="btn btn-primary btn-lg">جستجو کردن</button>
+                <button type="submit" class="btn btn-primary btn-lg">جستجو کردن</button>
               </div>
               <!-- End Input Card -->
             </form>
