@@ -5,8 +5,6 @@ class CartSession:
         self._cart = self.session.setdefault("cart",
         {
             "items":[],
-            "total_price": 0,
-            "total_items": 0
         })    
  
         
@@ -26,10 +24,11 @@ class CartSession:
     def clear(self):
         self._cart = self.session["cart"]={
             "items":[],
-            "total_price": 0,
-            "total_items": 0
         } 
         self.save()
+
+    def get_cart_dict(self):
+        return self._cart
 
     def save(self):
         self.session.modified = True
