@@ -3,10 +3,9 @@
 
 {% block content %}
 
-<main id="content" role="main">
-    <!-- Content -->
-    <div class="container content-space-3 content-space-lg-5">
-      <div class="row">
+<!-- Content -->
+<div class="container content-space-3 content-space-lg-5">
+    <div class="row">
         <div class="col-lg-8 mb-7 mb-lg-0">
           <!-- Heading -->
           <div class="d-flex justify-content-between align-items-end border-bottom pb-3 mb-7">
@@ -49,11 +48,11 @@
                         <div class="row">
                           <div class="col-auto">
                             <!-- Select -->
-                            <select class="form-select form-select-sm mb-3">
+                            <select class="form-select form-select-sm mb-3" onchange="changeProductQuantity('{{item.product_id}}',this.value)">
                               
                               {% with ''|center:item.product_obj.stock as range %}
                               {% for _ in range %}
-                                  <option value="{{ forloop.counter }}">{{ forloop.counter }}</option>
+                                  <option value="{{ forloop.counter }}" {% if forloop.counter == item.quantity %} selected {% endif %}>{{ forloop.counter }}</option>
                               {% endfor %}
                               {% endwith %}
                             </select>
@@ -62,13 +61,13 @@
 
                           <div class="col-auto">
                             <div class="d-grid gap-2">
-                              <a class="link-sm link-secondary small" href="javascript:;">
-                                <i class="bi-trash me-1"></i> حذف
-                              </a>
+                              <button class="btn btn-sm btn-icon mx-1" onclick="removeProduct('{{item.product_id}}')">
+                                <i class="bi-trash ms-1"></i> حذف
+                              </button>
 
-                              <a class="link-sm link-secondary small" href="javascript:;">
-                                <i class="bi-heart-fill ms-1 "></i>جزو علایق
-                              </a>
+                              <button class="btn btn-sm btn-icon mx-1">
+                                <i class="bi-heart-fill ms-1"></i>جزو علایق
+                              </button>
                             </div>
                           </div>
                           <!-- End Col -->
@@ -159,10 +158,51 @@
           </div>
         </div>
         <!-- End Col -->
-      </div>
-      <!-- End Row -->
     </div>
-    <!-- End Content -->
-  </main>
+      <!-- End Row -->
+</div>    
+<!-- End Content -->
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function changeProductQuantity(product_id,quantity){        
+        $.ajax({
+        url: "{% url 'cart:session-update-product-quantity' %}",
+        type: "POST",
+        data: {
+            product_id: product_id,
+            quantity: quantity,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(response) {
+            console.log(response);
+            window.location.reload();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error(errorThrown);
+        }
+      });
+    }    
+    function removeProduct(product_id){        
+        $.ajax({
+        url: "{% url 'cart:session-remove-product' %}",
+        type: "POST",
+        data: {
+            product_id: product_id,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(response) {
+            console.log(response);
+            window.location.reload();
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error(errorThrown);
+        }
+      });
+    }
+
+
+</script>
 
 {% endblock %}
