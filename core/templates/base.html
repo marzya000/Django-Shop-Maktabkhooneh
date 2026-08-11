@@ -24,6 +24,7 @@
     <!-- CSS Front Template -->
     <link rel="stylesheet" href="{% static 'css/theme.min.css' %}">
     <link rel="stylesheet" href="{% static 'vendor/toastify/toastify.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   
     {% block extra_css %}  {% endblock extra_css %}
 
@@ -550,6 +551,11 @@
       })
     })()
   </script>
+
+  <!-- JS Custom-->
+  <script src="{% static 'js/custom.js' %}"></script>
+  <!-- JS Cart-->
+
   <script>
   function addToCart(product_id){
     console.log(product_id)
