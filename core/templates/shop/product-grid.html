@@ -378,7 +378,7 @@
       window.location.href = new_url
     }
 </script>
-<script>
+{% comment %} <script>
   function addToCart(product_id){
     console.log(product_id)
     $.ajax({
@@ -397,5 +397,5 @@
       });
     }
  
-</script>
+</script> {% endcomment %}
 {% endblock extra_js %}
