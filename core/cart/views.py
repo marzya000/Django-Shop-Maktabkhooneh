@@ -9,8 +9,10 @@ class SessionAddProductView(View):
     def post(self,request,*args,**kwargs):
         cart = CartSession(request.session)
         product_id = request.POST.get("product_id")
+        quantity = request.POST.get("quantity", 1)
+
         if product_id:
-            cart.add_product(product_id)
+            cart.add_product(product_id,quantity)
         return JsonResponse({"cart":cart.get_cart_dict(), "total_quantity":cart.get_total_quantity()})
 
 class SessionRemoveProductView(View):

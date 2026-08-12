@@ -28,15 +28,22 @@ class CartSession:
             return
         self.save() 
 
-    def add_product(self,product_id):
+    def add_product(self,product_id,quantity=1):
+        product = ProductModel.objects.get(
+        id=product_id,
+        status=ProductStatusType.publish.value
+    )
+
+        quantity = int(quantity)
+
         for item in self._cart["items"]:
             if product_id == item["product_id"]:
-                item["quantity"] +=1
+                item["quantity"] += quantity
                 break
         else:
             new_item = {
                 "product_id":product_id,
-                "quantity":1
+                "quantity":quantity
             }
             self._cart["items"].append(new_item)
         self.save()

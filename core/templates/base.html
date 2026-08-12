@@ -557,26 +557,66 @@
   <!-- JS Cart-->
 
   <script>
-  function addToCart(product_id){
-    console.log(product_id)
+function addToCart(product_id) {
+
+    const quantityInput = document.querySelector('.js-result');
+
+    const quantity = quantityInput
+        ? parseInt(quantityInput.value) || 1
+        : 1;
+
+    console.log("product:", product_id);
+    console.log("quantity:", quantity);
+
     $.ajax({
         url: "{% url 'cart:session-add-product' %}",
         type: "POST",
         data: {
             product_id: product_id,
+            quantity: quantity,
             csrfmiddlewaretoken: '{{ csrf_token }}'
         },
         success: function(response) {
-            $("#total-cart-item-count").html(response.total_quantity)
+            $("#total-cart-item-count").html(response.total_quantity);
+
+            document.querySelector('.js-result').value = 1;
             console.log(response);
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.error(errorThrown);
         }
-      });
-    }
- 
-  </script>
+    });
+}
+</script>
+
+<script>
+function removeFromCart(product_id) {
+
+    $.ajax({
+        url: "{% url 'cart:session-remove-product' %}",
+        type: "POST",
+
+        data: {
+            product_id: product_id,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+
+        success: function(response) {
+
+            $("#total-cart-item-count").html(
+                response.total_quantity
+            );
+
+            console.log(response);
+
+        },
+
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error(errorThrown);
+        }
+    });
+}
+</script>
 
   {% block extra_js %}  {% endblock extra_js %}
 
