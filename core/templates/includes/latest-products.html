@@ -55,7 +55,7 @@
             </a>
             <!-- End Rating -->
 
-            <button type="button" class="btn btn-outline-primary btn-sm btn-transition rounded-pill">افزودن به سبد خرید</button>
+            <button type="button" class="btn btn-outline-primary btn-sm btn-transition rounded-pill" onclick="addToCart(`{{latest_product.id}}`)">افزودن به سبد خرید</button>
           </div>
         </div>
         <!-- End Card -->
@@ -78,3 +78,68 @@
   </div>
 </div>
 <!-- End Card Grid -->
+
+
+
+<script>
+function addToCart(product_id) {
+
+    const quantityInput = document.querySelector('.js-result');
+
+    const quantity = quantityInput
+        ? parseInt(quantityInput.value) || 1
+        : 1;
+
+    console.log("product:", product_id);
+    console.log("quantity:", quantity);
+
+    $.ajax({
+        url: "{% url 'cart:session-add-product' %}",
+        type: "POST",
+        data: {
+            product_id: product_id,
+            quantity: quantity,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(response) {
+            $("#total-cart-item-count").html(response.total_quantity);
+
+            document.querySelector('.js-result').value = 1;
+            console.log(response);
+        },
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error(errorThrown);
+        }
+    });
+}
+</script>
+
+<script>
+function removeFromCart(product_id) {
+
+    $.ajax({
+        url: "{% url 'cart:session-remove-product' %}",
+        type: "POST",
+
+        data: {
+            product_id: product_id,
+            csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+
+        success: function(response) {
+
+            $("#total-cart-item-count").html(
+                response.total_quantity
+            );
+
+            console.log(response);
+
+        },
+
+        error: function(jqXHR, textStatus, errorThrown) {
+            console.error(errorThrown);
+        }
+    });
+}
+</script>
+
