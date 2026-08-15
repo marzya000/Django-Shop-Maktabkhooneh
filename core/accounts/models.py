@@ -87,9 +87,9 @@ class Profile(models.Model):
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)
 
-
+    
 
 @receiver(post_save,sender=User)
 def create_profile(sender,instance,created,**kwargs):
-    if created and instance.type == UserType.customer.value:
+    if created:
         Profile.objects.create(user=instance, pk=instance.pk)
