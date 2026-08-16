@@ -2,7 +2,7 @@ from django.views.generic import View,TemplateView,UpdateView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from dashboard.permissions import HasCustomerAccessPermission
 from django.contrib.auth import views as auth_views
-from dashboard.admin.forms import CustomerPasswordChangeForm,CustomerProfileEditForm
+from dashboard.customer.forms import CustomerPasswordChangeForm,CustomerProfileEditForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from accounts.models import Profile
