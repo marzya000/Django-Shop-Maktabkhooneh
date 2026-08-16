@@ -29,7 +29,7 @@
           <div class="d-flex align-items-center">
             <!-- Avatar -->
             <label class="avatar avatar-xl avatar-circle" for="avatarUploader">
-              <img id="avatarImg" class="avatar-img" src="{% static '/img/160x160/img9.jpg' %}" alt="Image Description">
+              <img id="avatarImg" class="avatar-img" src="{{request.user.user_profile.image.url}}" alt="Image Description">
             </label>
 
             <div class="d-grid d-sm-flex gap-2 me-4">

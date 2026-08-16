@@ -104,7 +104,7 @@
 
                 <span class="avatar avatar-sm avatar-circle">
                   <img class="avatar-img"
-                      src="{% static 'img/160x160/img10.jpg' %}"
+                      src="{{request.user.user_profile.image.url}}"
                       alt="User Avatar">
                 </span>
               </button>
