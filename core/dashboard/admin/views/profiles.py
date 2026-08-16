@@ -9,8 +9,6 @@ from accounts.models import Profile
 from django.shortcuts import redirect
 from django.contrib import messages
 
-class AdminDashboardHomeView(LoginRequiredMixin,HasAdminAccessPermission,TemplateView):
-    template_name = "dashboard/admin/home.html"
 
 
 class AdminSecurityEditView(LoginRequiredMixin,HasAdminAccessPermission,SuccessMessageMixin,auth_views.PasswordChangeView):
