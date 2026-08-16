@@ -10,15 +10,13 @@ from django.shortcuts import redirect
 from django.contrib import messages
 
 
-class CustomerDashboardHomeView(LoginRequiredMixin,HasCustomerAccessPermission,TemplateView):
-    template_name = "dashboard/customer/home.html"
-
 
 class CustomerSecurityEditView(LoginRequiredMixin,HasCustomerAccessPermission,SuccessMessageMixin,auth_views.PasswordChangeView):
     template_name = "dashboard/customer/profile/security-edit.html"
     form_class = CustomerPasswordChangeForm
     success_url = reverse_lazy("dashboard:customer:security-edit")
     success_message = "بروزرسانی پسورد با موفقیت انجام شد"
+
 
 class CustomerProfileEditView(LoginRequiredMixin,HasCustomerAccessPermission,SuccessMessageMixin,UpdateView):
     template_name = "dashboard/Customer/profile/profile-edit.html"
