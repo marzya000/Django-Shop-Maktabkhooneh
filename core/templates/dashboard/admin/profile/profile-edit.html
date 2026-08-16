@@ -26,15 +26,17 @@
 
         <div class="col-sm-9">
           <!-- Media -->
-          <div class="d-flex align-items-center">
+         
+          <form action="{% url 'dashboard:admin:profile-image-edit' %}" method="post" class="d-flex align-items-center" enctype="multipart/form-data">
+            {% csrf_token %}
             <!-- Avatar -->
             <label class="avatar avatar-xl avatar-circle" for="avatarUploader">
               <img id="avatarImg" class="avatar-img" src="{{request.user.user_profile.image.url}}" alt="Image Description">
             </label>
 
             <div class="d-grid d-sm-flex gap-2 me-4">
-              <div class="form-attachment-btn btn btn-primary btn-sm">آپلود عکس
-                <input type="file" class="js-file-attach form-attachment-btn-label" id="avatarUploader"
+              <div class="form-attachment-btn btn btn-white btn-sm">آپلود عکس
+                <input type="file" name="image" class="js-file-attach form-attachment-btn-label" id="avatarUploader" accept="image/png,image/jpg,image/jpeg"
                   data-hs-file-attach-options='{
                                       "textTarget": "#avatarImg",
                                       "mode": "image",
@@ -45,9 +47,10 @@
                                    }'>
               </div>
               <!-- End Avatar -->
-              <button type="button" class="js-file-attach-reset-img btn btn-white btn-sm">حذف کردن</button>
+              <button type="submit" class="js-file-attach-reset-img btn btn-primary btn-sm">ارسال</button>
             </div>
-          </div>
+          </form>
+          
           <!-- End Media -->
         </div>
       </div>
