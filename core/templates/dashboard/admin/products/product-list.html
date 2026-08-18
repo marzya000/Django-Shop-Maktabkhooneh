@@ -28,12 +28,21 @@
       <div class="container pb-5">
         <form action="." class="row">
           <!-- Input Card -->
-          <div class="col-md-5 py-1">
-            <input type="text" class="form-control" placeholder="جستجوی کالا" name="q" id="search-query-filter" />
+          <div class="col-md-3 py-1">
+            <input type="text" class="form-control form-control-sm" placeholder="جستجوی کالا" name="q" id="search-query-filter" />
           </div>
           <!-- End Input Card -->
+          
           <div class="col-md-3 py-1">
-            <select class="form-select" id="order-by-filter" name="order_by">
+            <select class="form-select form-select-sm" name="category_id" id="category-id-filter">
+                <option value="" selected>انتخاب دسته بندی</option>  
+                {% for category in categories %}                        
+                <option value="{{category.id}}">{{category.title}}</option>    
+                {% endfor %}                      
+            </select>
+          </div>
+          <div class="col-md-3 py-1">
+            <select class="form-select form-select-sm" id="order-by-filter" name="order_by">
                 <option value="" selected>مرتب سازی</option>
                 <option value="-created_date">جدیدترین</option>
                 <option value="created_date">قدیمی ترین</option>
@@ -41,14 +50,18 @@
                 <option value="price">کمترین قیمت</option>
             </select>
           </div>
-          <div class="col-md-3 py-1">
-            <select class="form-select" name="category_id" id="category-id-filter">
-                <option value="" selected>انتخاب دسته بندی</option>  
-                {% for category in categories %}                        
-                <option value="{{category.id}}">{{category.title}}</option>    
-                {% endfor %}                      
-            </select>
+
+          <div class="col-md-2 py-1">
+              <select class="form-select form-select-sm" id="page-size-filter">
+                <option value="" selected>تعداد </option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="30">30</option>
+                <option value="50">50</option>
+              </select>
           </div>
+
           <div class="col-md-1 py-1">
             <button type="submit" class="btn btn-primary btn-search"><i class="bi-search"></i></button>
           </div>
@@ -87,7 +100,7 @@
                 </td>
                 <td>{{object.discount_percent}}</td>
                 <td>
-                  <a class="btn btn-sm btn-icon btn-ghost-secondary" href="./admin-account-products-single.html"><i class="bi-pencil-square"></i></a>
+                  <a class="btn btn-sm btn-icon btn-ghost-secondary" href="{% url 'dashboard:admin:product-edit' pk=object.pk %}"><i class="bi-pencil-square"></i></a>
                   {% if object.is_published %}
                   <a class="btn btn-sm btn-icon btn-ghost-primary" target="_blank" href="{% url 'shop:product-detail' slug=object.slug %}"><i class="bi-eye"></i></a>
                   {% endif %}
@@ -119,8 +132,8 @@
                     {% for i in page_obj.paginator.page_range %}
                     {% if page_obj.number == i %}
 
-                    <a class="page-link">{{ i }}</a>
-                            <li class="page-item active">
+                    <li class="page-item active">
+                      <a class="page-link">{{ i }}</a>                            
                     </li>
           
                     {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
@@ -165,7 +178,7 @@
         $("#max-price-filter").val(current_url_params.get("max_price") || "")
         $("#category-id-filter").val(current_url_params.get("category_id") || "")
     });
-    {% comment %} $('#page-size-filter').change(function() {        
+      $('#page-size-filter').change(function() {        
         let current_url_params = new URLSearchParams(window.location.search)
         var selectedOption = $(this).val();
         current_url_params.set("page_size",selectedOption)
@@ -178,7 +191,15 @@
         current_url_params.set("order_by",selectedOption)
         let new_url = window.location.pathname + "?" + current_url_params.toString()
         window.location.href = new_url
-      }); {% endcomment %}
+      });
+</script>
+<script>
+    function changePage(page_number){
+      let current_url_params = new URLSearchParams(window.location.search)
+      current_url_params.set("page",page_number)
+      let new_url = window.location.pathname + "?" + current_url_params.toString()
+      window.location.href = new_url
+    }
 </script>
 
 {% endblock %}

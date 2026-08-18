@@ -2,7 +2,7 @@ from django.views.generic import View,TemplateView,UpdateView,ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from dashboard.permissions import HasAdminAccessPermission
 from django.contrib.auth import views as auth_views
-from dashboard.admin.forms import AdminPasswordChangeForm,AdminProfileEditForm
+from dashboard.admin.forms import *
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from accounts.models import Profile
@@ -10,6 +10,7 @@ from django.shortcuts import redirect
 from django.contrib import messages
 from shop.models import ProductModel,ProductCategoryModel,ProductStatusType
 from django.core.exceptions import FieldError
+
 
 
 
@@ -47,3 +48,13 @@ class AdminProductListView(LoginRequiredMixin,HasAdminAccessPermission,ListView)
         self.request.session['fav_color'] = 'blue'
        
         return context
+
+
+class AdminProductEditView(LoginRequiredMixin,HasAdminAccessPermission,SuccessMessageMixin,UpdateView):    
+    template_name = 'dashboard/admin/products/product-edit.html'
+    queryset = ProductModel.objects.all()
+    form_class = ProductForm
+    success_message = "ویرایش محصول با موفقیت انجام شد"
+
+    def get_success_url(self):
+        return reverse_lazy("dashboard:admin:product-edit",kwargs=["pk",self.get_object().pk])
