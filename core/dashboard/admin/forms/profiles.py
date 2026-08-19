@@ -30,7 +30,10 @@ class AdminProfileEditForm(forms.ModelForm):
             "phone_number"
         ]
     def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)   
-            self.fields['first_name'].widget.attrs['class'] = 'form-control'
-            self.fields['last_name'].widget.attrs['class'] = 'form-control'
-            self.fields['phone_number'].widget.attrs['class'] = 'form-control text-center'
+        super().__init__(*args, **kwargs)   
+        self.fields['first_name'].widget.attrs['class'] = 'form-control'
+        self.fields['first_name'].widget.attrs['placeholder'] = 'نام خود را وارد نمایید'
+        self.fields['last_name'].widget.attrs['class'] = 'form-control'
+        self.fields['last_name'].widget.attrs['placeholder'] = 'نام خانوادگی را وارد نمایید'
+        self.fields['phone_number'].widget.attrs['class'] = 'form-control text-center'
+        self.fields['phone_number'].widget.attrs['placeholder'] = 'شماره همراه خود را وارد نمایید'
