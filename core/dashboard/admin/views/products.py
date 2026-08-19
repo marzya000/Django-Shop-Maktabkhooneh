@@ -1,4 +1,11 @@
-from django.views.generic import View,TemplateView,UpdateView,ListView,DeleteView
+from django.views.generic import (
+    View,
+    TemplateView,
+    UpdateView,
+    ListView,
+    DeleteView,
+    CreateView
+) 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from dashboard.permissions import HasAdminAccessPermission
 from django.contrib.auth import views as auth_views
@@ -48,6 +55,21 @@ class AdminProductListView(LoginRequiredMixin,HasAdminAccessPermission,ListView)
         self.request.session['fav_color'] = 'blue'
        
         return context
+
+class AdminProductCreateView(LoginRequiredMixin,HasAdminAccessPermission,SuccessMessageMixin,CreateView):    
+    template_name = 'dashboard/admin/products/product-create.html'
+    queryset = ProductModel.objects.all()
+    form_class = ProductForm
+    success_message = "ایجاد محصول با موفقیت انجام شد"
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        super().form_valid(form)
+        return redirect(reverse_lazy("dashboard:admin:product-edit",kwargs={"pk": form.instance.pk}))
+    
+    def get_success_url(self):
+        return reverse_lazy("dashboard:admin:product-list")
+
 
 
 class AdminProductEditView(LoginRequiredMixin,HasAdminAccessPermission,SuccessMessageMixin,UpdateView):    

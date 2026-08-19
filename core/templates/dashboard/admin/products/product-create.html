@@ -7,7 +7,7 @@
       <li class="breadcrumb-item">حساب</li>
       <li class="breadcrumb-item">داشبورد ادمین</li>
       <li class="breadcrumb-item">محصولات</li>
-      <li class="breadcrumb-item active" aria-current="page">ویرایش محصول</li>
+      <li class="breadcrumb-item active" aria-current="page">ایجاد محصول</li>
     </ol>
   </nav>  
 {% endblock %}
@@ -15,11 +15,8 @@
 {% block content %}
 <div class="card">
   <!-- Header -->
-  <div class="card-header border-bottom d-flex justify-content-between align-items-center">
-    <h5 class="card-header-title">ویرایش محصول</h5>
-  {% if object.is_published %}
-    <a class="btn btn-sm btn-primary" target="_blank" href="{% url 'shop:product-detail' slug=object.slug %}">نمایش محصول</a>
-  {% endif %}
+  <div class="card-header border-bottom">
+    <h5 class="card-header-title">ایجاد محصول</h5>
   </div>
   <!-- End Header -->
 
@@ -79,9 +76,8 @@
       </div>
       <div class="card-footer">
           <div class=" d-flex pt-5 justify-content-end">
-            <a class="btn btn-danger ms-3" href="{% url 'dashboard:admin:product-delete' pk=object.pk %}">حذف</a>
             <a class="btn btn-secondary ms-3" href="{% url 'dashboard:admin:product-list' %}">بازگشت</a>
-            <button class="btn btn-primary ms-3" type="submit">ثبت تغییرات</button>
+            <button class="btn btn-primary ms-3" type="submit"> ایجاد محصول</button>
           </div>
       </div>
   </form>
