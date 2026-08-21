@@ -80,9 +80,9 @@ class User(AbstractBaseUser,PermissionsMixin):
 
 class Profile(models.Model):
     user = models.OneToOneField('User',on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    phone_number = models.CharField(max_length=12,validators=[validate_iranian_cellphone_number])
+    first_name = models.CharField(max_length=255,blank=True)
+    last_name = models.CharField(max_length=255,blank=True)
+    phone_number = models.CharField(max_length=12,validators=[validate_iranian_cellphone_number],blank=True)
 
     created_date = models.DateTimeField(auto_now_add=True)
     updated_date = models.DateTimeField(auto_now=True)

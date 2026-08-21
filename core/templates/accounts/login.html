@@ -1,8 +1,8 @@
-{% extends 'base.html' %}
+{% extends 'accounts/base_account.html' %}
 
 
 {% block content %}
-{{ request.user }}
+
 <div class="container content-space-3 content-space-t-lg-4 content-space-b-lg-3">
       <div class="flex-grow-1 mx-auto" style="max-width: 28rem;">
         <!-- Heading -->
@@ -33,7 +33,7 @@
 
             <div class="input-group input-group-merge">
               <input type="password" class="form-control form-control-lg text-center" name="password"
-                id="signupSimpleLoginPassword" placeholder="8+ characters required" aria-label="8+ characters required"
+                id="signupSimpleLoginPassword" placeholder="رمز عبور خود را وارد نمایید" aria-label="8+ characters required"
                 required>
               <a id="changePassTarget" class="input-group-append input-group-text" href="javascript:;">
                 <i id="changePassIcon" class="bi-eye"></i>
@@ -50,7 +50,7 @@
           </div>
 
           <div class="text-center">
-            <p>حساب کاربری ندارید؟ <a class="link" href="./page-signup-simple.html">اینجا ثبت نام کنید</a></p>
+            <p>حساب کاربری ندارید؟ <a class="link" href="{% url 'accounts:signup' %}">اینجا ثبت نام کنید</a></p>
           </div>
         </form>
         <!-- End Form -->

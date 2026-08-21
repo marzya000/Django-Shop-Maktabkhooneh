@@ -3,7 +3,7 @@ from django.core.mail import EmailMultiAlternatives
 
 
 @shared_task
-def send_password_reset_email(subject, text_message, html_message, from_email, recipient_list):    
+def send_email(subject, text_message, html_message, from_email, recipient_list):    
 
     email = EmailMultiAlternatives(
         subject=subject,

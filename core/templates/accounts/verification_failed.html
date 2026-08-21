@@ -1,0 +1,15 @@
+{% extends "accounts/base_account.html" %}
+
+{% block content %}
+
+<h2>Verification failed</h2>
+
+<p>
+    The verification link is invalid or has expired.
+</p>
+
+<a href="{% url 'accounts:signup' %}">
+    Sign up again
+</a>
+
+{% endblock %}

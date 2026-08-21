@@ -22,6 +22,7 @@
 
   <!-- CSS Front Template -->
   <link rel="stylesheet" href="{% static 'css/theme.min.css' %}">
+  <link rel="stylesheet" href="{% static 'vendor/toastify/toastify.css' %}">
 </head>
 
 <body>
@@ -156,11 +157,12 @@
 
               <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">              
                   <a class="dropdown-item" href="#">
-                    پروفایل
-                  </a>                
+                    پروفایل 
+                  </a>             
                   <a class="dropdown-item" href="{% url 'accounts:logout' %}">
-                    خروج
-                  </a>                
+                    خروج 
+                  </a>
+                                 
               </div>
                 
               {% else %}
@@ -173,9 +175,9 @@
       </nav>
     </div>
   </header>
-
+   
   {% block content %}
-
+   
   {% endblock content %}
 
      <!-- ========== FOOTER ========== -->
@@ -389,6 +391,10 @@
 
   <!-- JS Front -->
   <script src="{% static 'js/theme.min.js' %}"></script>
+  
+  <!-- JS Toastify -->
+  <script src="{% static 'vendor/toastify/toastify.js' %}"></script>
+
 
   <!-- JS Plugins Init. -->
   <script>
@@ -437,6 +443,8 @@
       new HSTogglePassword('.js-toggle-password')
     })()
   </script>
+
+  {% include 'messages.html' %}
 </body>
 
 </html>
