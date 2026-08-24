@@ -3,23 +3,35 @@
 {% load shop_tags %}
 
 {% block content %}
+
   <!-- Hero -->
   <div class="container content-space-t-2 content-space-t-sm-3">
     <div class="row">
       <div class="col-md-7 mb-7 mb-md-0">
         <div class="pe-md-4">
-          <div class="card-pinned">
+          
+          <div class="card-pinned">            
             <!-- Swiper Main Slider -->
             <div class="js-swiper-shop-product swiper">
               <div class="swiper-wrapper">
                 <!-- Slide -->
+                <!-- Main Product Image -->
                 <div class="swiper-slide">
                   <div class="card card-bordered shadow-none">
-                    <img class="card-img" src="{{object.image.url}}" alt="Image Description" />
+                    <img class="card-img" src="{{object.image.url}}" alt="{{ object.title }}" />
                   </div>
                 </div>
                 <!-- End Slide -->
 
+                <!-- Extra Product Images -->
+                {% for image in object.images.all %}
+                  <div class="swiper-slide">
+                    <div class="card card-bordered shadow-none">
+                      <img class="card-img" src="{{ image.file.url }}" alt="{{ object.title }}" />
+                    </div>
+                  </div>
+                {% endfor %}
+                <!--=====================================-->
               </div>
 
               <!-- Arrows -->
@@ -33,12 +45,23 @@
               <div class="js-swiper-shop-product-thumb swiper" style="max-width: 15rem;">
                 <div class="swiper-wrapper">
                   <!-- Slide -->
+                  <!-- Main Image Thumbnail -->
                   <div class="swiper-slide">
-                    <a class="avatar avatar-circle" href="javascript:;"><img class="avatar-img" src="{{object.image.url}}" alt="Image Description" /></a>
+                    <a class="avatar avatar-circle" href="javascript:;">
+                      <img class="avatar-img" src="{{object.image.url}}" alt="{{object.title}}" />
+                    </a>
                   </div>
                   <!-- End Slide -->
 
-                
+                  <!-- Extra Image Thumbnails -->
+                  {% for image in object.images.all %}
+                    <div class="swiper-slide">
+                      <a class="avatar avatar-circle" href="javascript:;">
+                        <img class="avatar-img" src="{{ image.file.url }}" alt="{{ object.title }}" />
+                      </a>
+                    </div>
+                  {% endfor %}
+                  <!--===================-->
                   <!-- End Slide -->
                 </div>
               </div>
@@ -565,3 +588,28 @@
   </div>
   <!-- End Subscribe -->
 {% endblock %}
+
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const productThumbs = new Swiper('.js-swiper-shop-product-thumb', {
+        slidesPerView: 4,
+        spaceBetween: 10,
+        watchSlidesProgress: true,
+    });
+
+    new Swiper('.js-swiper-shop-product', {
+        navigation: {
+            nextEl: '.js-swiper-shop-product-button-next',
+            prevEl: '.js-swiper-shop-product-button-prev',
+        },
+        thumbs: {
+            swiper: productThumbs,
+        },
+    });
+
+});
+</script>
+{% endblock extra_js %}

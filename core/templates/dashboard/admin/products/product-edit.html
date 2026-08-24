@@ -76,6 +76,30 @@
           {{form.image}}
         </div> 
 
+        <div class="col-md-12 mb-3">
+          <label >عکس های اضافی محصول</label>
+          {{image_form.file}}
+        </div>
+
+        <div class="col-md-12 mb-3">
+            <label>عکس‌های فعلی محصول</label>
+
+            <div class="row mt-3">
+                {% for image in product_images %}
+                    <div class="col-md-3 mb-3">
+                        <div class="card">
+                            <img src="{{ image.file.url }}" class="card-img-top" alt="{{ object.title }}">
+                            <div class="card-body text-center">
+                               <a href="{% url 'dashboard:admin:product-image-delete' pk=image.pk %}" class="btn btn-danger btn-sm" > حذف عکس </a>
+                            </div>
+                        </div>
+                    </div>
+                {% empty %}
+                    <p>برای این محصول هنوز عکس اضافی ثبت نشده است.</p>
+                {% endfor %}
+            </div>
+        </div>        
+<!--================================================================-->
       </div>
       <div class="card-footer">
           <div class=" d-flex pt-5 justify-content-end">

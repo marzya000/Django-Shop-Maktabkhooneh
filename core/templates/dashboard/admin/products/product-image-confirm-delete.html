@@ -1,0 +1,33 @@
+{% extends 'dashboard/admin/base.html' %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-header border-bottom">
+        <h5 class="card-header-title">
+            Delete Additional Product Image
+        </h5>
+    </div>
+
+    <div class="card-body">
+        <p>
+            Are you sure you want to delete this additional product image?
+        </p>
+
+        <img src="{{ object.file.url }}" class="img-fluid mb-3" style="max-width: 300px;" alt="{{ object.product.title }}">
+
+        <form method="post">
+            {% csrf_token %}
+            <a href="{% url 'dashboard:admin:product-edit' pk=object.product.pk %}" class="btn btn-secondary">
+                Cancel
+            </a>
+            <button type="submit" class="btn btn-danger">
+                Delete
+            </button>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
+

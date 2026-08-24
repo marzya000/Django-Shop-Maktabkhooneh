@@ -9,18 +9,19 @@ from django.views.generic import (
 from django.contrib.auth.mixins import LoginRequiredMixin
 from dashboard.permissions import HasAdminAccessPermission
 from django.contrib.auth import views as auth_views
-from dashboard.admin.forms import *
+# from dashboard.admin.forms import *
+from dashboard.admin.forms import ProductForm, ProductImageForm
 from django.contrib.messages.views import SuccessMessageMixin
 from django.urls import reverse_lazy
 from accounts.models import Profile
 from django.shortcuts import redirect
 from django.contrib import messages
-from shop.models import ProductModel,ProductCategoryModel,ProductStatusType
+from shop.models import ProductModel,ProductCategoryModel,ProductStatusType,ProductImageModel
 from django.core.exceptions import FieldError
 
 
 
-
+# Display all products in the admin dashboard
 class AdminProductListView(LoginRequiredMixin,HasAdminAccessPermission,ListView):
     template_name = 'dashboard/admin/products/product-list.html'    
     paginate_by = 9
@@ -28,7 +29,6 @@ class AdminProductListView(LoginRequiredMixin,HasAdminAccessPermission,ListView)
     def get_paginate_by(self, queryset):
         return self.request.GET.get("page_size", self.paginate_by)
            
-
     def get_queryset(self):
         queryset = ProductModel.objects.all()
         
@@ -46,16 +46,16 @@ class AdminProductListView(LoginRequiredMixin,HasAdminAccessPermission,ListView)
             except FieldError:
                 pass
         return queryset
-        
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["total_items"] = self.get_queryset().count()
         context["categories"] = ProductCategoryModel.objects.all()     
-        self.request.session['fav_color'] = 'blue'
-       
+        self.request.session['fav_color'] = 'blue'       
         return context
 
+
+# Create a new product
 class AdminProductCreateView(LoginRequiredMixin,HasAdminAccessPermission,SuccessMessageMixin,CreateView):    
     template_name = 'dashboard/admin/products/product-create.html'
     queryset = ProductModel.objects.all()
@@ -71,20 +71,45 @@ class AdminProductCreateView(LoginRequiredMixin,HasAdminAccessPermission,Success
         return reverse_lazy("dashboard:admin:product-list")
 
 
-
+# Edit an existing product
 class AdminProductEditView(LoginRequiredMixin,HasAdminAccessPermission,SuccessMessageMixin,UpdateView):    
     template_name = 'dashboard/admin/products/product-edit.html'
     queryset = ProductModel.objects.all()
     form_class = ProductForm
     success_message = "ویرایش محصول با موفقیت انجام شد"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["image_form"] = ProductImageForm()
+        context["product_images"] = self.object.images.all()
+        return context
+
+
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        images = self.request.FILES.getlist('file')
+        for image in images:
+            ProductImageModel.objects.create(product=self.object,file=image)
+        return response
+
+
     def get_success_url(self):
         return reverse_lazy("dashboard:admin:product-edit",kwargs={"pk":self.get_object().pk})
 
 
-
+  # Delete a product  
 class AdminProductDeleteView(LoginRequiredMixin,HasAdminAccessPermission,SuccessMessageMixin,DeleteView):
     template_name = 'dashboard/admin/products/product-delete.html'
     queryset = ProductModel.objects.all()
     success_url = reverse_lazy("dashboard:admin:product-list")
     success_message = "حذف محصول با موفقیت انجام شد"
+
+
+# Delete an additional product image
+class AdminProductImageDeleteView(LoginRequiredMixin,HasAdminAccessPermission,SuccessMessageMixin,DeleteView):
+    model = ProductImageModel
+    template_name = 'dashboard/admin/products/product-image-confirm-delete.html'
+    success_message = "تصویر اضافی محصول با موفقیت حذف شد."
+
+    def get_success_url(self):
+        return reverse_lazy("dashboard:admin:product-edit",kwargs={"pk":self.get_object().product.pk})
