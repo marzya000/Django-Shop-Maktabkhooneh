@@ -1,5 +1,5 @@
-
 from shop.models import ProductModel, ProductStatusType
+from cart.models import CartModel,CartItemModel
 
 class CartSession:
     # total_payment_price = 0
@@ -74,7 +74,10 @@ class CartSession:
         self.session.modified = True
 
     def sync_cart_items_from_db(self,user):
-        pass
+        cart,created = CartModel.objects.get_or_create(user=user)
+        cart_items = CartItemModel.objects.filter(cart=cart)
+        print(cart_items)
 
     def merge_session_cart_in_db(self,user):
-        pass
+        cart,created = CartModel.objects.get_or_create(user=user)
+        cart_items = CartItemModel.objects.filter(cart=cart)
