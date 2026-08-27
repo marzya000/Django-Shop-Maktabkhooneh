@@ -39,7 +39,7 @@ class SessionUpdateProductQuantityView(View):
 
 
 
-class SessionCartSummaryView(TemplateView):
+class CartSummaryView(TemplateView):
     template_name = "cart/cart-summary.html"
 
     def get_context_data(self, **kwargs):
