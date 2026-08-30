@@ -13,13 +13,8 @@ from order.models import UserAddressModel
 
 
 class CustomerAddressListView(LoginRequiredMixin,HasCustomerAccessPermission,ListView):
-    template_name = 'dashboard/customer/addresses/address-list.html'    
-    paginate_by = 9
-    
-    def get_paginate_by(self, queryset):
-        return self.request.GET.get("page_size", self.paginate_by)
+    template_name = 'dashboard/customer/addresses/address-list.html'
            
-
     def get_queryset(self):
         queryset = UserAddressModel.objects.filter(user=self.request.user)        
         if search_q:=self.request.GET.get('q'):
@@ -31,13 +26,6 @@ class CustomerAddressListView(LoginRequiredMixin,HasCustomerAccessPermission,Lis
                 pass
         return queryset
         
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["total_items"] = self.get_queryset().count()  
-        self.request.session['fav_color'] = 'blue'
-       
-        return context
 
 class CustomerAddressCreateView(LoginRequiredMixin,HasCustomerAccessPermission,SuccessMessageMixin,CreateView):    
     template_name = 'dashboard/customer/addresses/address-create.html'
@@ -51,7 +39,7 @@ class CustomerAddressCreateView(LoginRequiredMixin,HasCustomerAccessPermission,S
     def form_valid(self, form):
         form.instance.user = self.request.user
         super().form_valid(form)
-        return redirect(reverse_lazy("dashboard:Customer:address-edit",kwargs={"pk": form.instance.pk}))
+        return redirect(reverse_lazy("dashboard:customer:address-edit",kwargs={"pk": form.instance.pk}))
     
     def get_success_url(self):
         return reverse_lazy("dashboard:customer:address-list")
