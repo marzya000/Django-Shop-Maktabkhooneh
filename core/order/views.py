@@ -5,10 +5,12 @@ from django.views.generic import (
     TemplateView,
     FormView
 )
-from order.models import UserAddressModel
+from order.models import UserAddressModel,OrderModel,OrderItemModel
 from order.forms import CheckOutForm
 from cart.models import CartModel
 from django.urls import reverse_lazy
+from cart.cart import CartSession
+
 
 class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView):
     template_name = 'order/checkout.html'
@@ -24,8 +26,28 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
     def form_valid(self, form):
         cleaned_data = form.cleaned_data
         address = cleaned_data["address_id"]
-        print(address)
+        cart = CartModel.objects.get(user=self.request.user)
+        cart_items = cart.cart_items.all()
+        order = OrderModel.objects.create(
+            user =self.request.user,
+            address = address.address,
+            state = address.state,
+            city = address.city,
+            zip_code =  address.zip_code,       
+        )
+        for item in cart_items :
+            OrderItemModel.objects.create(
+                order = order,
+                product = item.product,
+                quantity = item.quantity,
+                price = item.product.get_price(),
+            )
+        cart_items.delete()
+        CartSession(self.request.session).clear()
+        order.total_price = order.calculate_total_price()
+        order.save()
 
+        print(address)
         # print(self.request.POST) 
         return super().form_valid(form)
 
