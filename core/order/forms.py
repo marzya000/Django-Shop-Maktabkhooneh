@@ -21,10 +21,10 @@ class CheckOutForm(forms.Form):
         
         return address 
 
-
     def clean_coupon(self):
         code = self.cleaned_data.get("coupon")
-    
+        if code == "":
+            return None
         user = self.request.user
         coupon = None
         try:
