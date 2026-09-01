@@ -73,14 +73,14 @@
                   <dt class="col-sm-6">مالیات تخمینی</dt>
                   <dd class="col-sm-12 text-sm-end mb-0">
                     9% مالیات -
-                    <span class="formatted-price">{{total_tax}}</span>
+                    <span class="formatted-price" id="total_tax">{{total_tax}}</span>
                   </dd>
                 </dl>
                 <!-- End Row -->
 
                 <dl class="row">
                   <dt class="col-sm-6">جمع کل</dt>
-                  <dd class="col-sm-6 text-sm-end mb-0 formatted-price">{{total_price}}</dd>
+                  <dd class="col-sm-6 text-sm-end mb-0 formatted-price" id="total_price">{{total_price}}</dd>
                 </dl>
                 <!-- End Row -->
               </div>
@@ -120,6 +120,14 @@
 
 {% block extra_js %}
 <script>
+    function applyDiscount(total_price,total_tax){
+      $("#total_price").html(total_price)
+      $("#total_tax").html(total_tax)
+
+      formatPriceInToman(document.getElementById("total_price"))
+      formatPriceInToman(document.getElementById("total_tax"))
+    }
+
     function validateCoupon(){
         $.ajax({
         url: "{% url 'order:validate-coupon' %}",
@@ -137,9 +145,17 @@
                     background: "blue",
                 }
               }).showToast();
+              applyDiscount(response.total_price,response.total_tax)
         },
         error: function(jqXHR, textStatus, errorThrown) {
             console.error(errorThrown);
+            Toastify({
+                text:jqXHR.responseJSON.message,
+                className: `error`,
+                style: {
+                    background: "red",
+                }
+              }).showToast();
         }
       });
     }
