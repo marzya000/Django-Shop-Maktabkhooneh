@@ -10,6 +10,7 @@ from order.forms import CheckOutForm
 from cart.models import CartModel
 from django.urls import reverse_lazy
 from cart.cart import CartSession
+from decimal import Decimal
 
 
 class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView):
@@ -26,6 +27,8 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
     def form_valid(self, form):
         cleaned_data = form.cleaned_data
         address = cleaned_data["address_id"]
+        coupon = cleaned_data["coupon"]
+
         cart = CartModel.objects.get(user=self.request.user)
         cart_items = cart.cart_items.all()
         order = OrderModel.objects.create(
@@ -44,7 +47,15 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
             )
         cart_items.delete()
         CartSession(self.request.session).clear()
-        order.total_price = order.calculate_total_price()
+        total_price = order.calculate_total_price()
+        if coupon:
+            total_price = total_price - round((total_price * Decimal(coupon.discount_percent/100)))
+            order.coupon = coupon
+
+            coupon.used_by.add(self.request.user)
+            coupon.save()
+
+        order.total_price = total_price
         order.save()
 
         print(address)
