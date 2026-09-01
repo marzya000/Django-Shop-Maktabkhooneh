@@ -5,12 +5,16 @@ from django.views.generic import (
     TemplateView,
     FormView
 )
-from order.models import UserAddressModel,OrderModel,OrderItemModel
+from django.views import View
+from order.models import UserAddressModel,OrderModel,OrderItemModel,CouponModel
 from order.forms import CheckOutForm
 from cart.models import CartModel
 from django.urls import reverse_lazy
 from cart.cart import CartSession
 from decimal import Decimal
+from django.http import JsonResponse
+from django.utils import timezone
+
 
 
 class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView):
@@ -79,3 +83,29 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
 
 class OrderCompletedView(LoginRequiredMixin,HasCustomerAccessPermission,TemplateView):
     template_name = 'order/completed.html'
+
+
+
+class ValidateCouponView(LoginRequiredMixin,HasCustomerAccessPermission,View):
+
+    def post(self,request,*args,**kwargs):
+        code = request.POST.get("code")
+        user = self.request.user
+
+        is_valid = True
+        message = "کد تخفیف با موفقیت ثبت شد"
+        try:
+            coupon = CouponModel.objects.get(code=code)
+        except CouponModel.DoesNotExist:
+            return JsonResponse({"is_valid":False, "message":"کد تخفیف یافت نشد"})
+        else:
+            if coupon.used_by.count() >= coupon.max_limit_usage:
+                is_valid,message = False,"محدودیت در تعداد استفاده"
+        
+            if coupon.expiration_date and coupon.expiration_date < timezone.now():
+                is_valid,message = False,"کد تخفیف منقضی شده است"
+        
+            if user in coupon.used_by.all():
+                is_valid,message = False,"این کد تخفیف قبلا توسط شما استفاده شده است"
+
+        return JsonResponse({"is_valid":is_valid, "message":message})
