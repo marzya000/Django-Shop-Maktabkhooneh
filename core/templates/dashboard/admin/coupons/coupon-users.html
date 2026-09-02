@@ -1,0 +1,101 @@
+{% extends 'dashboard/admin/base.html' %}
+
+{% block content %}
+
+<div class="container-fluid">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h4 class="mb-1">کاربران استفاده‌کننده از کد تخفیف</h4>
+            <p class="text-muted mb-0">
+                کد تخفیف:
+                <strong>{{ coupon.code }}</strong>
+            </p>
+        </div>
+
+        <a href="{% url 'dashboard:admin:coupon-list' %}"
+           class="btn btn-secondary">
+            بازگشت به لیست کدهای تخفیف
+        </a>
+    </div>
+
+
+    <div class="card">
+
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <span>لیست کاربران</span>
+
+            <span class="badge bg-primary">
+                تعداد استفاده: {{ users.count }}
+            </span>
+        </div>
+
+
+        <div class="card-body p-0">
+
+            {% if users %}
+
+                <div class="table-responsive">
+
+                    <table class="table table-hover mb-0">
+
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>نام کاربر</th>
+                                <th>ایمیل</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for user in users %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ forloop.counter }}
+                                    </td>
+
+                                    <td>
+                                        {% if user.get_full_name %}
+                                            {{ user.get_full_name }}
+                                        {% else %}
+                                            {{ user.username }}
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {{ user.email }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="text-center py-5">
+
+                    <p class="text-muted mb-0">
+                        تاکنون هیچ کاربری از این کد تخفیف استفاده نکرده است.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
+
