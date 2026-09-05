@@ -14,6 +14,10 @@ from cart.cart import CartSession
 from decimal import Decimal
 from django.http import JsonResponse
 from django.utils import timezone
+from django.shortcuts import redirect
+from payment.zarinpal_client import ZarinPalSandbox
+from payment.models import PaymentModel
+
 
 
 
@@ -60,14 +64,27 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
             coupon.save()
 
         order.total_price = total_price
-        order.save()
+        order.save()    
+        return redirect(self.create_payment_url(order))
 
-        print(address)
-        # print(self.request.POST) 
-        return super().form_valid(form)
+    def create_payment_url(self,order):
+        zarinpal = ZarinPalSandbox()
+        response = zarinpal.payment_request(order.total_price,callback_url="http://redreseller.com/verify",
+        description=f"پرداخت سفارش {order.id}",
+        )
+        authority = response['data']['authority']
+
+        payment_obj = PaymentModel.objects.create(
+            authority_id = authority,          
+            amount = order.total_price,
+        )
+        order.payment = payment_obj
+        order.save()
+        return zarinpal.generate_payment_url(authority)
+
 
     def form_invalid(self, form):
-        print(self.request.POST)         
+        print(self.request.POST)
         return super().form_invalid(form)
     
     
