@@ -3,7 +3,7 @@ from .models import OrderModel,OrderItemModel,CouponModel,UserAddressModel
 
 
 @admin.register(OrderModel)
-class OrderModelModelAdmin(admin.ModelAdmin):
+class OrderModelAdmin(admin.ModelAdmin):
     list_display = (
         "id",
         "user",

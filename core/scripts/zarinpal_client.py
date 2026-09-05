@@ -3,7 +3,7 @@ import json
 
 
 class ZarinPalSandbox:
-    _payment_request_url = "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentRrequest.json"
+    _payment_request_url = "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentRequest.json"
     _payment_verify_url = "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentVerification.json"
     _payment_page_url = "https://sandbox.zarinpal.com/pg/StarPay/"
     _callback_url = "http://redreseller.com/verify"
@@ -26,6 +26,7 @@ class ZarinPalSandbox:
     
         response = requests.post(
             self._payment_request_url, headers=headers, data=json.dumps(payload))
+
     
         return response.json()
     
