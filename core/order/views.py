@@ -9,7 +9,7 @@ from django.views import View
 from order.models import UserAddressModel,OrderModel,OrderItemModel,CouponModel
 from order.forms import CheckOutForm
 from cart.models import CartModel
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy,reverse
 from cart.cart import CartSession
 from decimal import Decimal
 from django.http import JsonResponse
@@ -69,7 +69,18 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
 
     def create_payment_url(self,order):
         zarinpal = ZarinPalSandbox()
-        response = zarinpal.payment_request(order.total_price,callback_url="http://redreseller.com/verify",
+        
+        callback_url = self.request.build_absolute_uri(
+            reverse("payment:verify")
+        )
+        ####
+        print("=" * 50)
+        print("CALLBACK URL:", callback_url)
+        print("ORDER ID:", order.id)
+        print("ORDER TOTAL:", order.total_price)
+        print("=" * 50)
+        #####
+        response = zarinpal.payment_request(order.total_price,callback_url=callback_url,
         description=f"پرداخت سفارش {order.id}",
         )
         authority = response['data']['authority']
@@ -97,9 +108,14 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
         context["total_tax"] = round((total_price * 9)/100)
         return context
 
+
+
+
 class OrderCompletedView(LoginRequiredMixin,HasCustomerAccessPermission,TemplateView):
     template_name = 'order/completed.html'
 
+class OrderFailedView(LoginRequiredMixin,HasCustomerAccessPermission,TemplateView):
+    template_name = 'order/failed.html'
 
 
 class ValidateCouponView(LoginRequiredMixin,HasCustomerAccessPermission,View):
