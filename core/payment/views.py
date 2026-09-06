@@ -4,6 +4,7 @@ from .models import PaymentModel, PaymentStatusType
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
 from .zarinpal_client import ZarinPalSandbox
+from order.models import OrderModel,OrderStatusType
 
 
 class PaymentVerifyView(View):
@@ -11,6 +12,7 @@ class PaymentVerifyView(View):
         authority_id = request.GET.get("Authority")
         status = request.GET.get("Status")
         payment_obj = get_object_or_404(PaymentModel,authority_id=authority_id)
+        order = OrderModel.objects.get(payment=payment_obj)
 
        # اگر کاربر پرداخت را لغو کرده باشد
         if status != "OK":            
@@ -18,6 +20,8 @@ class PaymentVerifyView(View):
             payment_obj.status = PaymentStatusType.failed.value
             payment_obj.response_json = { "callback_status": status, "authority": authority_id }
             payment_obj.save()
+            order.status = OrderStatusType.failed.value
+            order.save()
             return redirect(reverse_lazy('order:failed'))
         
         # Verify payment
@@ -35,9 +39,13 @@ class PaymentVerifyView(View):
             payment_obj.ref_id = ref_id
             payment_obj.status = PaymentStatusType.success.value
             payment_obj.save()
+            
+            order.status = OrderStatusType.success.value
+            order.save()
             return redirect(reverse_lazy("order:completed"))
 
         # پرداخت ناموفق
         payment_obj.status = PaymentStatusType.failed.value
         payment_obj.save()
+        
         return redirect(reverse_lazy("order:failed"))
