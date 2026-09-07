@@ -16,6 +16,7 @@ from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import redirect
 from payment.clients.zarinpal_client import ZarinPalSandbox
+from payment.clients.zibal_client import ZibalClient
 from payment.models import PaymentModel
 
 
@@ -64,8 +65,10 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
             coupon.save()
 
         order.total_price = total_price
-        order.save()    
-        return redirect(self.create_payment_url(order))
+        order.save()
+        ### انتخاب درگاه اصلی زیبال  یا # زرین‌پال
+        return redirect(self.create_zibal_payment_url(order))
+    
 
     def create_payment_url(self,order):
         zarinpal = ZarinPalSandbox()
@@ -92,6 +95,32 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
         order.payment = payment_obj
         order.save()
         return zarinpal.generate_payment_url(authority)
+
+
+    def create_zibal_payment_url(self, order):
+        zibal = ZibalClient(merchant="zibal")
+
+        callback_url = self.request.build_absolute_uri(
+            reverse("payment:zibal_verify")
+        )
+
+        response = zibal.payment_request(
+            order.total_price,
+            callback_url=callback_url,
+            description=f"پرداخت سفارش {order.id}",
+        )
+
+        track_id = response["trackId"]
+
+        payment_obj = PaymentModel.objects.create(
+            authority_id=str(track_id),
+            amount=order.total_price,
+        )
+
+        order.payment = payment_obj
+        order.save()
+
+        return zibal.generate_payment_url(track_id)
 
 
     def form_invalid(self, form):

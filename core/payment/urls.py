@@ -5,4 +5,5 @@ app_name = 'payment'
 
 urlpatterns = [
     path('verify',views.PaymentVerifyView.as_view(),name='verify'),
+    path('zibal/verify',views.ZibalPaymentVerifyView.as_view(),name='zibal_verify'),
 ]
