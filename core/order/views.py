@@ -15,7 +15,7 @@ from decimal import Decimal
 from django.http import JsonResponse
 from django.utils import timezone
 from django.shortcuts import redirect
-from payment.zarinpal_client import ZarinPalSandbox
+from payment.clients.zarinpal_client import ZarinPalSandbox
 from payment.models import PaymentModel
 
 

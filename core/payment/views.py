@@ -3,7 +3,7 @@ from django.views.generic import View
 from .models import PaymentModel, PaymentStatusType
 from django.urls import reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
-from .zarinpal_client import ZarinPalSandbox
+from payment.clients.zarinpal_client import ZarinPalSandbox
 from order.models import OrderModel,OrderStatusType
 
 
