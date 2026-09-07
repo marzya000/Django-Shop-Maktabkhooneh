@@ -60,13 +60,6 @@ class ZibalPaymentVerifyView(View):
         status = request.GET.get("status")
         track_id = request.GET.get("trackId")
 
-        print("-" * 50)
-        print("ZIBAL CALLBACK")
-        print("SUCCESS:", success)
-        print("STATUS:", status)
-        print("TRACK ID:", track_id)
-        print("-" * 50)
-
         if not track_id:
             return redirect(reverse_lazy("order:failed"))
 
@@ -77,6 +70,8 @@ class ZibalPaymentVerifyView(View):
 
         order = OrderModel.objects.get(payment=payment_obj)
 
+        # اگر پرداخت قبلاً تعیین تکلیف شده است،
+        # دوباره آن را پردازش نکن
         if payment_obj.status in [
             PaymentStatusType.success.value,
             PaymentStatusType.failed.value,
@@ -102,13 +97,10 @@ class ZibalPaymentVerifyView(View):
             return redirect(reverse_lazy("order:failed"))
 
         # Verify payment
-        zibal = ZibalClient(merchant="zibal")
-
+        zibal = ZibalClient()
         try:
             response = zibal.payment_verify(track_id)
-
         except Exception as e:
-
             payment_obj.status = PaymentStatusType.failed.value
             payment_obj.response_json = {
                 "error": str(e)

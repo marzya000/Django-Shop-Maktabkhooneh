@@ -1,51 +1,75 @@
 import requests
 import json
-
+from django.conf import settings
 
 class ZarinPalSandbox:
-    _payment_request_url = "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentRequest.json"
-    _payment_verify_url = "https://sandbox.zarinpal.com/pg/rest/WebGate/PaymentVerification.json"
-    _payment_page_url = "https://sandbox.zarinpal.com/pg/StarPay/"
-    _callback_url = "http://redreseller.com/verify"
+    _payment_request_url = "https://sandbox.zarinpal.com/pg/v4/payment/request.json"
+    _payment_verify_url = "https://sandbox.zarinpal.com/pg/v4/payment/verify.json"
+    _payment_page_url = "https://sandbox.zarinpal.com/pg/StartPay/"
+    _callback_url = "http://127.0.0.1:8000/payment/verify"
 
 
-    def __init__(self,merchant_id):
-        self.merchant_id = merchant_id
+
+    def __init__(self,merchant_id=None):
+        self.merchant_id = merchant_id or settings.MERCHANT_ID
 
 
-    def payment_request(self, amount, description="پرداختی کاربر"):
+    def payment_request(self, amount, callback_url=None, description="پرداختی کاربر"):
         payload = {
-            "MerchantID": self.merchant_id,
-            "Amount": str(amount),
-            "CallbackURL": self._callback_url,
-            "Description": description,
+            "merchant_id": self.merchant_id,
+            "amount": int(amount),
+            "callback_url": callback_url or self._callback_url,
+            "description": description,
         }
         headers = {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
         }
-    
-        response = requests.post(
-            self._payment_request_url, headers=headers, data=json.dumps(payload))
 
-    
-        return response.json()
-    
-    
+        response = requests.post(
+            self._payment_request_url, headers=headers, json=payload,
+        timeout=15)
+        print("_" * 50)
+        print("STATUS CODE:", response.status_code)
+        print("HEADERS:", response.headers)
+        print("RESPONSE TEXT:", repr(response.text))
+        print("" * 50)
+
+        response.raise_for_status()
+        data = response.json()
+        if data.get("errors"):
+            raise Exception(f"ZarinPal Error: {data['errors']}")
+        return data
+
+
     def payment_verify(self, amount, authority):
         payload = {
-            "MerchantID": self.merchant_id,
-            "Amount": amount,
-            "Authority": authority
+            "merchant_id": self.merchant_id,
+            "amount": int(amount),
+            "authority": authority,
         }
         headers = {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
         }
-    
+
         response = requests.post(
-            self._payment_verify_url, headers=headers, data=json.dumps(payload))
-        return response.json()
-    
-    
+            self._payment_verify_url, headers=headers, json=payload,
+        timeout=15)
+
+        print("-" * 50)
+        print("ZARINPAL VERIFY")
+        print("STATUS:", response.status_code)
+        print("RESPONSE:", response.text)
+        print("-" * 50)
+
+        response.raise_for_status()
+        data = response.json()
+        if data.get("errors"):
+            raise Exception(f"ZarinPal Error: {data['errors']}")
+        return data
+
+
     def generate_payment_url(self, authority):
         return self._payment_page_url + authority
 
@@ -56,9 +80,13 @@ if __name__ == "__main__":
 
     print(response)
     input("proceed to generating payment url?")
-    print(zarinpal.generate_payment_url(response["Authority"]))
+    authority = response["data"]["authority"]
+    print(zarinpal.generate_payment_url(authority))
 
-
+   
     input("check the payment?")
-    response = zarinpal.payment_verify(15000,response["Authority"])
+    response = zarinpal.payment_verify(
+        15000,
+        authority
+    )  
     print(response)

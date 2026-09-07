@@ -13,6 +13,12 @@ class ZibalClient:
     def __init__(self, merchant=None):
         self.merchant = merchant or settings.ZIBAL_MERCHANT
 
+    def _get_headers(self):
+        return {
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+
     def payment_request(
         self,
         amount,
@@ -26,23 +32,13 @@ class ZibalClient:
             "description": description,
         }
 
-        headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        }
-
+        
         response = requests.post(
             self._payment_request_url,
-            headers=headers,
+            headers=self._get_headers(),
             json=payload,
             timeout=15
         )
-
-        print("-" * 50)
-        print("ZIBAL REQUEST")
-        print("STATUS:", response.status_code)
-        print("RESPONSE:", response.text)
-        print("-" * 50)
 
         response.raise_for_status()
 
@@ -64,23 +60,13 @@ class ZibalClient:
             "trackId": int(track_id),
         }
 
-        headers = {
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        }
 
         response = requests.post(
             self._payment_verify_url,
-            headers=headers,
+            headers=self._get_headers(),
             json=payload,
             timeout=15
         )
-
-        print("-" * 50)
-        print("ZIBAL VERIFY")
-        print("STATUS:", response.status_code)
-        print("RESPONSE:", response.text)
-        print("-" * 50)
 
         response.raise_for_status()
 
@@ -93,28 +79,3 @@ class ZibalClient:
 
         return data
 
-
-if __name__ == "__main__":
-
-    zibal = ZibalClient(
-        merchant="zibal"
-    )
-
-    track_id = "4774691693"
-
-    response = zibal.payment_verify(track_id)
-
-    print(response)
-
-    # response = zibal.payment_request(
-    #     amount=15000,
-    #     description="تست پرداخت"
-    # )
-
-    # print(response)
-
-    # track_id = response["trackId"]
-
-    # payment_url = zibal.generate_payment_url(track_id)
-
-    # print("PAYMENT URL:", payment_url)
