@@ -17,6 +17,7 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from payment.clients.zarinpal_client import ZarinPalSandbox
 from payment.clients.zibal_client import ZibalClient
+from payment.clients.payexa_client import PayexaClient
 from payment.models import PaymentModel
 
 
@@ -66,8 +67,8 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
 
         order.total_price = total_price
         order.save()
-        ### انتخاب درگاه اصلی زیبال  یا # زرین‌پال
-        return redirect(self.create_zibal_payment_url(order))
+        ### انتخاب درگاه اصلی پی اکسا # یا زیبال  یا # زرین‌پال
+        return redirect(self.create_payexa_payment_url(order))
     
 
     def create_payment_url(self,order):
@@ -76,13 +77,7 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
         callback_url = self.request.build_absolute_uri(
             reverse("payment:verify")
         )
-        ####
-        print("=" * 50)
-        print("CALLBACK URL:", callback_url)
-        print("ORDER ID:", order.id)
-        print("ORDER TOTAL:", order.total_price)
-        print("=" * 50)
-        #####
+        
         response = zarinpal.payment_request(order.total_price,callback_url=callback_url,
         description=f"پرداخت سفارش {order.id}",
         )
@@ -122,6 +117,30 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
 
         return zibal.generate_payment_url(track_id)
 
+
+    def create_payexa_payment_url(self, order):
+        payexa = PayexaClient()
+
+        callback_url = self.request.build_absolute_uri(
+            reverse("payment:payexa_verify")
+        )
+        response = payexa.payment_request(
+            amount=order.total_price,
+            callback_url=callback_url,
+            order_ref=order.id,
+        )
+
+        payment_obj = PaymentModel.objects.create(
+            authority_id= response["authority"],
+            amount= order.total_price,
+            response_json= response,
+        )
+
+        order.payment = payment_obj
+        order.save()
+        return payexa.generate_payment_url(
+            response["authority"]
+        )
 
     def form_invalid(self, form):
         print(self.request.POST)

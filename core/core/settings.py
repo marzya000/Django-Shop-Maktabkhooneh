@@ -184,3 +184,6 @@ SANDBOX_MODE = config("SANDBOX_MODE", cast=bool, default=True)
 # zibal payment gateway settings
 ZIBAL_MERCHANT = config("ZIBAL_MERCHANT",default="zibal")
 
+
+# PAYEXA payment settings
+PAYEXA_API_KEY = config("PAYEXA_API_KEY",default="PAYEXA")

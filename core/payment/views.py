@@ -5,6 +5,7 @@ from django.urls import reverse_lazy
 from django.shortcuts import redirect, get_object_or_404
 from payment.clients.zarinpal_client import ZarinPalSandbox
 from payment.clients.zibal_client import ZibalClient
+from payment.clients.payexa_client import PayexaClient
 from order.models import OrderModel,OrderStatusType
 
 
@@ -140,3 +141,103 @@ class ZibalPaymentVerifyView(View):
         return redirect(
             reverse_lazy("order:failed")
         )
+
+
+class PayexaPaymentVerifyView(View):
+    def get(self, request, *args, **kwargs):
+        authority = request.GET.get("authority")
+        order_id = request.GET.get("order_id")
+        payment_action = request.GET.get("payment_action")
+        status = request.GET.get("status")
+
+        if not authority:
+            return redirect(reverse_lazy("order:failed"))
+
+        payment_obj = get_object_or_404(PaymentModel,authority_id=authority,)
+
+        order = OrderModel.objects.get(payment=payment_obj)
+
+        # اگر این پرداخت قبلاً تعیین تکلیف شده،
+        # دوباره آن را پردازش نکن
+        if payment_obj.status in [
+            PaymentStatusType.success.value,
+            PaymentStatusType.failed.value,
+        ]:
+            if payment_obj.status == PaymentStatusType.success.value:
+                return redirect(reverse_lazy("order:completed"))
+            
+            return redirect(reverse_lazy("order:failed"))
+
+        # اگر Callback موفق نباشد
+        if (
+            payment_action != "SUCCESS"
+            or status != "SUCCESS"
+        ):
+            payment_obj.status = PaymentStatusType.failed.value
+            payment_obj.response_json = {
+                **payment_obj.response_json,
+                "callback": {
+                    "authority": authority,
+                    "order_id": order_id,
+                    "payment_action": payment_action,
+                    "status": status,
+                },
+            }
+            payment_obj.save()
+
+            order.status = OrderStatusType.failed.value
+            order.save()
+
+            return redirect(reverse_lazy("order:failed"))
+
+        # اطلاعات لازم برای Verify
+        request_data = payment_obj.response_json
+
+        payexa_order_id = request_data.get("order_id")
+        amount_unique = request_data.get("amount_unique")
+
+        payexa = PayexaClient()
+
+        try:
+            verify_status, response = payexa.payment_verify(
+                order_id=payexa_order_id,
+                token=amount_unique,
+            )
+        except Exception as e:
+            payment_obj.response_json = {
+                **payment_obj.response_json,
+                "verify_error": str(e),
+            }
+            payment_obj.save()
+
+            return redirect(reverse_lazy("order:failed"))
+
+        # ذخیره پاسخ Verify
+        payment_obj.response_json = {
+            **payment_obj.response_json,
+            "verify": response,
+        }
+        payment_obj.response_code = verify_status
+
+        # پرداخت موفق
+        if verify_status in [200, 201]:
+            payment_obj.status = PaymentStatusType.success.value
+            payment_obj.save()
+
+            order.status = OrderStatusType.success.value
+            order.save()
+
+            return redirect(reverse_lazy("order:completed"))
+        
+
+        # پرداخت ناموفق
+        payment_obj.status = PaymentStatusType.failed.value
+        payment_obj.save()
+
+        order.status = OrderStatusType.failed.value
+        order.save()
+
+        return redirect(reverse_lazy("order:failed"))
+    
+
+        
