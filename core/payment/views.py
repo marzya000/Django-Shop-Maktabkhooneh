@@ -16,6 +16,21 @@ class PaymentVerifyView(View):
         payment_obj = get_object_or_404(PaymentModel,authority_id=authority_id)
         order = OrderModel.objects.get(payment=payment_obj)
 
+        # اگر پرداخت قبلاً تعیین تکلیف شده است،
+        # دوباره آن را پردازش نکن
+        if payment_obj.status in [
+            PaymentStatusType.success.value,
+            PaymentStatusType.failed.value,
+        ]:
+            if payment_obj.status == PaymentStatusType.success.value:
+                return redirect(
+                    reverse_lazy("order:completed")
+                )
+
+            return redirect(
+                reverse_lazy("order:failed")
+            )
+
        # اگر کاربر پرداخت را لغو کرده باشد
         if status != "OK":            
             payment_obj.response_code = None

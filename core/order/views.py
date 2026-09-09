@@ -68,7 +68,7 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
         order.total_price = total_price
         order.save()
         ### انتخاب درگاه اصلی پی اکسا # یا زیبال  یا # زرین‌پال
-        return redirect(self.create_payexa_payment_url(order))
+        return redirect(self.create_payment_url(order))
     
 
     def create_payment_url(self,order):
