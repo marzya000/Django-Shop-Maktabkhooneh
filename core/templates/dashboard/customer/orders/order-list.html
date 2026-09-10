@@ -56,13 +56,13 @@
                   <div class="row">
                     <div class="col-6 col-md mb-3 mb-md-0">
                       <small class="card-subtitle mb-0">مبلغ سفارش</small>
-                      <small class="text-dark fw-semibold">{{object.total_price}}</small>
+                      <small class="text-dark fw-semibold formatted-price">{{object.total_price}}</small>
                     </div>
                     <!-- End Col -->
 
                     <div class="col-6 col-md mb-3 mb-md-0">
                       <small class="card-subtitle mb-0">وضعیت</small>
-                      <small class="text-dark fw-semibold">{{object.status}}</small>
+                      <small class="text-dark fw-semibold">{{object.get_status.label}}</small>
                     </div>
                     <!-- End Col -->
 
@@ -85,9 +85,9 @@
                   <div class="row">
                     <div class="col-md-8">
                       <div class="row gx-2">
-                      {% for order_item in object.order_items.all %}
+                      {% for order_item in object.order_items.all|slice:":4" %}
                         <div class="col">
-                          <img class="img-fluid" style="width:200px" src="{{order_item.product.image.url}}" alt="Image Description" />
+                          <img class="img-fluid" style="width:100px; height:100px;" src="{{order_item.product.image.url}}" alt="Image Description" />
                         </div>
                         {% endfor %}
                       
@@ -98,7 +98,7 @@
                     <div class="col-md-4">
                       <div class="d-grid gap-2">                        
                         <a class="btn btn-white btn-sm" href="#"><i class="bi-receipt small me-2"></i> مشاهده فاکتور</a>
-                        <a class="btn btn-primary btn-sm" href="#">مشاهده سفارش</a>
+                        <a class="btn btn-primary btn-sm" href="{% url 'dashboard:customer:order-detail' pk=object.pk %}">مشاهده سفارش</a>
                       </div>
                     </div>
                   </div>
