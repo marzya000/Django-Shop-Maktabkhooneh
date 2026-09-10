@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
-
+from decimal import Decimal
 
 
 class OrderStatusType(models.IntegerChoices):
@@ -70,6 +70,18 @@ class OrderModel(models.Model):
 
     def get_full_address(self):
         return f"{self.state},{self.city},{self.address}"
+
+
+    @property
+    def is_successful(self):
+        return self.status == OrderStatusType.success.value
+    
+    def get_price(self):
+        
+        if self.coupon:            
+            return round(self.total_price - (self.total_price * Decimal( self.coupon.discount_percent /100)))
+        else:
+            return self.total_price
 
 
 class OrderItemModel(models.Model):

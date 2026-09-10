@@ -17,10 +17,44 @@
     <!-- Header -->
     <div class="card-header border-bottom">
       <form class="input-group input-group-merge">
-        <div class="input-group-prepend input-group-text">
-          <i class="bi-search"></i>
-        </div>
-        <input type="search" class="form-control" placeholder="جستجو کنید" aria-label="Search orders" />
+        <!-- Input Card -->
+            <div class="col-md-3 py-1">
+                <input type="text" class="form-control form-control-sm" placeholder="جستو جوی سفارش" name="q"
+                    id="search-query-filter">
+
+            </div>
+            <div class="col-md-3 py-1">
+                <select class="form-select form-select-sm" id="status-type-filter" name="status">
+                    <option value="" selected>وضعیت</option>
+                    {% for status_type in status_types %}
+                    <option value="{{status_type.0}}">{{status_type.1}}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="col-md-3 py-1">
+                <select class="form-select form-select-sm" id="order-by-filter">
+                    <option value="" selected>مرتب سازی</option>
+                    <option value="-created_date">جدیدترین</option>
+                    <option value="created_date">قدیمی ترین</option>
+                </select>
+            </div>
+
+            <div class="col-md-2 py-1">
+                <select class="form-select form-select-sm" id="page-size-filter">
+                    <option value="" selected>تعداد</option>
+                    <option value="5">5</option>
+                    <option value="10">10</option>
+                    <option value="20">20</option>
+                    <option value="30">30</option>
+                    <option value="50">50</option>
+                </select>
+            </div>
+
+            <div class="col-md-1 py-1">
+                <button type="submit" class="btn btn-sm btn-icon btn-primary btn-search"><i
+                        class="bi-search"></i></button>
+            </div>
       </form>
     </div>
     <!-- End Header -->
@@ -96,8 +130,10 @@
                     </div>
 
                     <div class="col-md-4">
-                      <div class="d-grid gap-2">                        
-                        <a class="btn btn-white btn-sm" href="#"><i class="bi-receipt small me-2"></i> مشاهده فاکتور</a>
+                      <div class="d-grid gap-2">
+                        {% if object.is_successful %}                        
+                        <a class="btn btn-white btn-sm" href="{% url 'dashboard:customer:order-invoice' pk=object.pk %}"><i class="bi-receipt small me-2"></i> مشاهده فاکتور</a>
+                        {% endif %}
                         <a class="btn btn-primary btn-sm" href="{% url 'dashboard:customer:order-detail' pk=object.pk %}">مشاهده سفارش</a>
                       </div>
                     </div>
@@ -148,4 +184,34 @@
     <!-- End Body -->
   </div>
   <!-- End Card -->
+{% endblock %}
+
+
+{% block extra_js %}
+<script>
+
+    $(document).ready(function () {
+        let current_url_params = new URLSearchParams(window.location.search)
+        $("#page-size-filter").val(current_url_params.get("page_size") || "5")
+        $("#order-by-filter").val(current_url_params.get("order_by") || "")
+        $("#search-query-filter").val(current_url_params.get("q") || "")
+        $("#status-type-filter").val(current_url_params.get("status") || "")
+
+    });
+    $('#page-size-filter').change(function () {
+        let current_url_params = new URLSearchParams(window.location.search)
+        var selectedOption = $(this).val();
+        current_url_params.set("page_size", selectedOption)
+        let new_url = window.location.pathname + "?" + current_url_params.toString()
+        window.location.href = new_url
+    });
+    $('#order-by-filter').change(function () {
+        let current_url_params = new URLSearchParams(window.location.search)
+        var selectedOption = $(this).val();
+        current_url_params.set("order_by", selectedOption)
+        let new_url = window.location.pathname + "?" + current_url_params.toString()
+        window.location.href = new_url
+    });
+
+</script>
 {% endblock %}

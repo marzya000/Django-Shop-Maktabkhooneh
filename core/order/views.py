@@ -73,13 +73,13 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
         callback_url = self.request.build_absolute_uri(
             reverse("payment:verify")
         )
-        ####
-        print("=" * 50)
-        print("CALLBACK URL:", callback_url)
-        print("ORDER ID:", order.id)
-        print("ORDER TOTAL:", order.total_price)
-        print("=" * 50)
-        #####
+        # ####
+        # print("=" * 50)
+        # print("CALLBACK URL:", callback_url)
+        # print("ORDER ID:", order.id)
+        # print("ORDER TOTAL:", order.total_price)
+        # print("=" * 50)
+        # #####
         response = zarinpal.payment_request(order.total_price,callback_url=callback_url,
         description=f"پرداخت سفارش {order.id}",
         )
