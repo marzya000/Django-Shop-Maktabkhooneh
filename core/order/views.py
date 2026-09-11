@@ -59,9 +59,8 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
         CartSession(self.request.session).clear()
         total_price = order.calculate_total_price()
         if coupon:
-            total_price = total_price - round((total_price * Decimal(coupon.discount_percent/100)))
-            order.coupon = coupon
 
+            order.coupon = coupon
             coupon.used_by.add(self.request.user)
             coupon.save()
 
@@ -78,14 +77,14 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
             reverse("payment:verify")
         )
         
-        response = zarinpal.payment_request(order.total_price,callback_url=callback_url,
+        response = zarinpal.payment_request(order.get_price(),callback_url=callback_url,
         description=f"پرداخت سفارش {order.id}",
         )
         authority = response['data']['authority']
 
         payment_obj = PaymentModel.objects.create(
             authority_id = authority,          
-            amount = order.total_price,
+            amount = order.get_price(),
         )
         order.payment = payment_obj
         order.save()
@@ -100,7 +99,7 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
         )
 
         response = zibal.payment_request(
-            order.total_price,
+            order.get_price(),
             callback_url=callback_url,
             description=f"پرداخت سفارش {order.id}",
         )
@@ -109,7 +108,7 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
 
         payment_obj = PaymentModel.objects.create(
             authority_id=str(track_id),
-            amount=order.total_price,
+            amount=order.get_price(),
         )
 
         order.payment = payment_obj
@@ -125,14 +124,14 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
             reverse("payment:payexa_verify")
         )
         response = payexa.payment_request(
-            amount=order.total_price,
+            amount=order.get_price(),
             callback_url=callback_url,
             order_ref=order.id,
         )
 
         payment_obj = PaymentModel.objects.create(
             authority_id= response["authority"],
-            amount= order.total_price,
+            amount= order.get_price(),
             response_json= response,
         )
 
