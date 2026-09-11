@@ -57,9 +57,8 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
         CartSession(self.request.session).clear()
         total_price = order.calculate_total_price()
         if coupon:
-            total_price = total_price - round((total_price * Decimal(coupon.discount_percent/100)))
+          
             order.coupon = coupon
-
             coupon.used_by.add(self.request.user)
             coupon.save()
 
@@ -73,26 +72,21 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
         callback_url = self.request.build_absolute_uri(
             reverse("payment:verify")
         )
-        # ####
-        # print("=" * 50)
-        # print("CALLBACK URL:", callback_url)
-        # print("ORDER ID:", order.id)
-        # print("ORDER TOTAL:", order.total_price)
-        # print("=" * 50)
-        # #####
-        response = zarinpal.payment_request(order.total_price,callback_url=callback_url,
+       
+        response = zarinpal.payment_request(order.get_price(),callback_url=callback_url,
         description=f"پرداخت سفارش {order.id}",
         )
         authority = response['data']['authority']
 
         payment_obj = PaymentModel.objects.create(
             authority_id = authority,          
-            amount = order.total_price,
+            amount = order.get_price(),
         )
         order.payment = payment_obj
         order.save()
         return zarinpal.generate_payment_url(authority)
 
+  
 
     def form_invalid(self, form):
         print(self.request.POST)

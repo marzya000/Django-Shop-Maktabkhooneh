@@ -45,7 +45,7 @@ class OrderModel(models.Model):
 
     payment = models.ForeignKey("payment.PaymentModel",on_delete=models.SET_NULL,null=True,blank=True)
     total_price = models.DecimalField(default=0,max_digits=10,decimal_places=0)
-
+ 
     coupon = models.ForeignKey(CouponModel,on_delete=models.PROTECT,null=True,blank=True)
 
     status = models.IntegerField(choices=OrderStatusType.choices,default=OrderStatusType.pending.value)
