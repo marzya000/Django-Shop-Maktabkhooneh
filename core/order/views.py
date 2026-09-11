@@ -86,7 +86,7 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
         order.save()
         return zarinpal.generate_payment_url(authority)
 
-  
+
 
     def form_invalid(self, form):
         print(self.request.POST)
