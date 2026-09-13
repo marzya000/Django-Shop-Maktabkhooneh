@@ -17,8 +17,9 @@ from django.utils import timezone
 from django.shortcuts import redirect
 from payment.clients.zarinpal_client import ZarinPalSandbox
 from payment.models import PaymentModel
-
-
+from django.core.exceptions import ValidationError
+from django.db import transaction
+from shop.models import ProductModel
 
 
 class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView):
@@ -37,34 +38,76 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
         address = cleaned_data["address_id"]
         coupon = cleaned_data["coupon"]
 
-        cart = CartModel.objects.get(user=self.request.user)
-        cart_items = cart.cart_items.all()
-        order = OrderModel.objects.create(
-            user =self.request.user,
-            address = address.address,
-            state = address.state,
-            city = address.city,
-            zip_code =  address.zip_code,       
-        )
-        for item in cart_items :
-            OrderItemModel.objects.create(
-                order = order,
-                product = item.product,
-                quantity = item.quantity,
-                price = item.product.get_price(),
-            )
-        cart_items.delete()
-        CartSession(self.request.session).clear()
-        total_price = order.calculate_total_price()
-        if coupon:
-          
-            order.coupon = coupon
-            coupon.used_by.add(self.request.user)
-            coupon.save()
+        try:
+            with transaction.atomic():
 
-        order.total_price = total_price
-        order.save()    
+                cart = CartModel.objects.get(user=self.request.user)
+                cart_items = (
+                    cart.cart_items
+                    .select_related('product')
+                    .order_by('product_id')
+                )
+                # بررسی اینکه سبد خالی نباشد
+                if not cart_items.exists():
+                    form.add_error(None,'سبد خرید شما خالی است.')
+                    return self.form_invalid(form)
+
+                # محصولات را یکی یکی قفل و موجودی آنها را بررسی می‌کنیم
+                locked_products = {}
+                for item in cart_items:
+                    product = (ProductModel.objects.select_for_update().get(id=item.product_id))
+
+                    if product.stock < item.quantity:
+                        form.add_error(
+                            None,
+                            f"موجودی محصول {product.title} کافی نیست. - "
+                            f"موجودی فعلی: {product.stock}"
+                        )
+                        return self.form_invalid(form)
+
+                    locked_products[product.id] = product
+                # ساخت سفارش
+                order = OrderModel.objects.create(
+                    user =self.request.user,
+                    address = address.address,
+                    state = address.state,
+                    city = address.city,
+                    zip_code =  address.zip_code,       
+                )
+                # ساخت OrderItem و کاهش موجودی
+                for item in cart_items :
+                    product = locked_products[item.product_id]
+                    OrderItemModel.objects.create(
+                        order = order,
+                        product = product,
+                        quantity = item.quantity,
+                        price = product.get_price(),
+                    )
+
+                    product.stock -= item.quantity
+                    product.save(update_fields=['stock','updated_date'])
+                # حذف محصولات از سبد
+                cart_items.delete()
+
+                # پاک کردن Session Cart
+                CartSession(self.request.session).clear()
+
+                # محاسبه قیمت
+                total_price = order.calculate_total_price()
+                if coupon:          
+                    order.coupon = coupon
+                    coupon.used_by.add(self.request.user)
+                    coupon.save()
+
+                order.total_price = total_price
+                order.save()    
+                
+        except CartModel.DoesNotExist:
+            form.add_error(None,'سبد خرید پیدا نشد.')  
+            return self.form_invalid(form)
+
         return redirect(self.create_payment_url(order))
+        
 
     def create_payment_url(self,order):
         zarinpal = ZarinPalSandbox()

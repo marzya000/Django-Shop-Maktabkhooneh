@@ -33,7 +33,7 @@
           {% endif %}
         {% endfor %}
       </ul>
-      {% if form.non_field_errors %}        
+      {% if form.non_field_errors %}         
         <script>
             Toastify({
                 text: `{{ form.non_field_errors.as_text }}`,
@@ -42,7 +42,7 @@
                     background: "red",
                 }
             }).showToast();
-        </script>
+        </script>        
       {% endif %}
     </div>
 {% endif %}
