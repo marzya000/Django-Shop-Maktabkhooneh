@@ -56,7 +56,7 @@ class OrderCheckOutView(LoginRequiredMixin,HasCustomerAccessPermission,FormView)
                 locked_products = {}
                 for item in cart_items:
                     product = (ProductModel.objects.select_for_update().get(id=item.product_id))
-
+                    
                     if product.stock < item.quantity:
                         form.add_error(
                             None,
