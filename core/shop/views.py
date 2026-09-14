@@ -4,8 +4,9 @@ from django.views.generic import (
     ListView,
     DetailView
 )
-from .models import ProductModel, ProductStatusType, ProductCategoryModel
+from .models import ProductModel, ProductStatusType, ProductCategoryModel, WishlistProductModel
 from django.core.exceptions import FieldError
+
 
 class ShopProductGridView(ListView):
     template_name = 'shop/product-grid.html'    
@@ -37,8 +38,9 @@ class ShopProductGridView(ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["total_items"] = self.get_queryset().count()
+        context["wishlist_items"] = WishlistProductModel.objects.filter(user=self.request.user).values_list('product__id', flat=True)
         context["categories"] = ProductCategoryModel.objects.all()     
-        self.request.session['fav_color'] = 'blue'       
+        self.request.session['fav_color'] = 'blue'
         return context
 
 
