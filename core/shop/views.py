@@ -49,6 +49,7 @@ class ShopProductDetailView(DetailView):
     queryset = ProductModel.objects.filter(status=ProductStatusType.publish.value)
 
     def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)           
-        print(self.request.session.get('fav_color'))           
+        context = super().get_context_data(**kwargs)
+        context["is_wished"] = WishlistProductModel.objects.filter(user=self.request.user,product__id=self.get_object().id).exists()
+        self.request.session['fav_color'] = 'blue' # ezafy
         return context
