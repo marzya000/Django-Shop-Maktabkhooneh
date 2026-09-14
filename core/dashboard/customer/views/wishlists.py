@@ -33,3 +33,12 @@ class CustomerWishlistListView(LoginRequiredMixin,HasCustomerAccessPermission,Li
         context = super().get_context_data(**kwargs)
         context["total_items"] = self.get_queryset().count()   
         return context
+
+
+class CustomerWishlistDeleteView(LoginRequiredMixin,HasCustomerAccessPermission,SuccessMessageMixin,DeleteView):
+    http_method_names = ["post"]
+    success_url = reverse_lazy('dashboard:customer:wishlist-list')
+    success_message = "محصول با موفقیت از لیست حذف شد"
+
+    def get_queryset(self):
+        return WishlistProductModel.objects.filter(user=self.request.user)
