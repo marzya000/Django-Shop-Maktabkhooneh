@@ -9,6 +9,7 @@ from django.views.generic import (
 from .models import ProductModel, ProductStatusType, ProductCategoryModel, WishlistProductModel
 from django.core.exceptions import FieldError
 from django.contrib.auth.mixins import LoginRequiredMixin
+from review.models import ReviewModel,ReviewStatusType
 
 
 class ShopProductGridView(ListView):
@@ -54,8 +55,10 @@ class ShopProductDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        product = self.get_object()
         context["is_wished"] = WishlistProductModel.objects.filter(
-            user=self.request.user,product__id=self.get_object().id).exists() if self.request.user.is_authenticated else False
+            user=self.request.user,product__id=product.id).exists() if self.request.user.is_authenticated else False
+        context["reviews"] = ReviewModel.objects.filter(product=product,status=ReviewStatusType.accepted.value)
         self.request.session['fav_color'] = 'blue' # ezafy
         return context
 

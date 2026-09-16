@@ -4,4 +4,4 @@ from .models import ReviewModel
 
 @admin.register(ReviewModel)
 class ReviewModelAdmin(admin.ModelAdmin):
-    list_display = ("id","user","product","rate","created_date")
+    list_display = ("id","user","product","rate","status","created_date")
