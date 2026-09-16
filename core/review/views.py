@@ -21,7 +21,7 @@ class SubmitReviewView(LoginRequiredMixin, CreateView):
     def form_invalid(self, form):
         product= form.changed_data['product']
         messages.error(self.request, 'خطایی در ثبت دیدگاه اتفاق افتاد')        
-        return redirect(self.request.META.get('HTTP_REFERER'))
+        return redirect(self.request.META.get('HTTP_REFERRER'))
 
     def get_queryset(self):
         return ReviewModel.objects.filter(user=self.request.user)
