@@ -8,6 +8,12 @@ class SubmitReviewForm(forms.ModelForm):
         model = ReviewModel
         fields = ['product', 'rate', 'description']
 
+        error_messages = {
+            'description': {
+                'required': 'فیلد توضیحات اجباری است    ',
+            },
+        }
+
     def clean(self):
         cleaned_data = super().clean()
         product = cleaned_data.get('product')
