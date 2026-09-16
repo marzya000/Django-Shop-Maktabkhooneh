@@ -396,11 +396,13 @@
             {% for review in reviews %}
             <li class="list-comment-item">
               <div class="d-flex gap-1 mb-3">
-                <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-                <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-                <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-                <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-                <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
+                {% for i in "12345" %}
+                    {% if i|add:0 <= review.rate %}
+                    <span><i class="bi bi-star-fill star-rate"></i></span>
+                    {% else %}
+                    <span><i class="bi bi-star star-rate"></i></span>
+                    {% endif %}
+                {% endfor %}                
               </div>
 
               <!-- Media -->
