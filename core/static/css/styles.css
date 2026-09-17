@@ -1,7 +1,12 @@
+
 .formatted-price {
       font-weight: bold;
     }
 
-.star-rate { 
-    color:gold;
-    }
+.star-rate .bi-star-fill {
+    color: #FFD700 !important;
+}
+
+.star-rate .bi-star {
+    color: #ccc !important;
+}

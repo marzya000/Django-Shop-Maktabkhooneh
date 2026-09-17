@@ -395,12 +395,12 @@
             <!-- Item -->
             {% for review in reviews %}
             <li class="list-comment-item">
-              <div class="d-flex gap-1 mb-3">
+              <div class="d-flex gap-1 mb-3 star-rate">
                 {% for i in "12345" %}
                     {% if i|add:0 <= review.rate %}
-                    <span><i class="bi bi-star-fill star-rate"></i></span>
+                    <span><i class="bi bi-star-fill"></i></span>
                     {% else %}
-                    <span><i class="bi bi-star star-rate"></i></span>
+                    <span><i class="bi bi-star"></i></span>
                     {% endif %}
                 {% endfor %}                
               </div>
@@ -524,7 +524,6 @@
     </div>
   </div>
 </div>
-
 
 
 {% endblock %}
