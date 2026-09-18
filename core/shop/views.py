@@ -58,7 +58,18 @@ class ShopProductDetailView(DetailView):
         product = self.get_object()
         context["is_wished"] = WishlistProductModel.objects.filter(
             user=self.request.user,product__id=product.id).exists() if self.request.user.is_authenticated else False
-        context["reviews"] = ReviewModel.objects.filter(product=product,status=ReviewStatusType.accepted.value)
+        reviews = ReviewModel.objects.filter(product=product,status=ReviewStatusType.accepted.value)
+
+        context["reviews"] = reviews
+        context ["rating_counts"] = {
+            5: reviews.filter(rate=5).count(),
+            4: reviews.filter(rate=4).count(),
+            3: reviews.filter(rate=3).count(),
+            2: reviews.filter(rate=2).count(),
+            1: reviews.filter(rate=1).count(),
+        }
+        context["total_reviews"] = reviews.count()
+        
         self.request.session['fav_color'] = 'blue' # ezafy
         return context
 

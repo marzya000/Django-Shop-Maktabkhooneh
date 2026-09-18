@@ -264,13 +264,15 @@
 
               <div class="col-7">
                 <div class="progress">
-                  <div class="progress-bar" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar" role="progressbar" style="width: {% widthratio rating_counts.5 total_reviews 100 %}%;" aria-valuenow="{% widthratio rating_counts.5 total_reviews 100 %}" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
               <!-- End Col -->
 
               <div class="col-2 text-end">
-                <span>205</span>
+                <span>
+                  {{rating_counts.5}} <!--{% widthratio rating_counts.5 total_reviews 100 %}%-->
+                </span>
               </div>
               <!-- End Col -->
             </a>
@@ -284,13 +286,15 @@
 
               <div class="col-7">
                 <div class="progress">
-                  <div class="progress-bar" role="progressbar" style="width: 53%;" aria-valuenow="53" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar" role="progressbar" style="width: {% widthratio rating_counts.4 total_reviews 100 %}%;" aria-valuenow="{% widthratio rating_counts.4 total_reviews 100 %}" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
               <!-- End Col -->
 
               <div class="col-2 text-end">
-                <span>55</span>
+                <span>
+                  {{rating_counts.4}} <!--{% widthratio rating_counts.4 total_reviews 100 %}%-->
+                </span>
               </div>
               <!-- End Col -->
             </a>
@@ -304,13 +308,15 @@
 
               <div class="col-7">
                 <div class="progress">
-                  <div class="progress-bar" role="progressbar" style="width: 20%;" aria-valuenow="20" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar" role="progressbar" style="width: {% widthratio rating_counts.3 total_reviews 100 %}%;" aria-valuenow="{% widthratio rating_counts.3 total_reviews 100 %}" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
               <!-- End Col -->
 
               <div class="col-2 text-end">
-                <span>23</span>
+                <span>
+                  {{rating_counts.3}} <!--{% widthratio rating_counts.3 total_reviews 100 %}%-->
+                </span>
               </div>
               <!-- End Col -->
             </a>
@@ -324,13 +330,15 @@
 
               <div class="col-7">
                 <div class="progress">
-                  <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar" role="progressbar" style="width: {% widthratio rating_counts.2 total_reviews 100 %}%;" aria-valuenow="{% widthratio rating_counts.2 total_reviews 100 %}" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
               <!-- End Col -->
 
               <div class="col-2 text-end">
-                <span>0</span>
+                <span>
+                  {{rating_counts.2}} <!--{% widthratio rating_counts.2 total_reviews 100 %}%-->
+                </span>
               </div>
               <!-- End Col -->
             </a>
@@ -344,13 +352,15 @@
 
               <div class="col-7">
                 <div class="progress">
-                  <div class="progress-bar" role="progressbar" style="width: 1%;" aria-valuenow="1" aria-valuemin="0" aria-valuemax="100"></div>
+                  <div class="progress-bar" role="progressbar" style="width: {% widthratio rating_counts.1 total_reviews 100 %}%;" aria-valuenow="{% widthratio rating_counts.1 total_reviews 100 %}" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
               </div>
               <!-- End Col -->
 
               <div class="col-2 text-end">
-                <span>4</span>
+                <span>
+                  {{rating_counts.1}} <!--{% widthratio rating_counts.1 total_reviews 100 %}%-->
+                </span>
               </div>
               <!-- End Col -->
             </a>
