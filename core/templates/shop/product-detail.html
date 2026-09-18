@@ -216,6 +216,7 @@
   <!-- فقط برای شما-->
   {% show_similar_products product=object %}
 
+  
   <!-- Review Section -->
   <div id="reviewSection" class="container content-space-b-2 content-space-b-lg-3">
     <div class="row">
@@ -392,12 +393,17 @@
                 </select>
                 <!-- End Select -->
               </div>
-
+              
+             {% if request.user.is_authenticated %}
               <div class="col-sm-auto mb-2 text-center">
                 <button type="button" class="btn btn-primary btn-transition rounded-pill" data-bs-toggle="modal"
                  data-bs-target="#submitReviewModal">
                   ثبت دیدگاه</button>
-              </div>
+              </div> 
+              {% else %}
+              <p>برای ثبت نظر ابتدا باید وارد شوید.<a href="{% url 'accounts:login' %}"> صفحه ورود </a></p>
+              {% endif %}          
+            
               <!-- End Col -->
             </div>
             <!-- End Row -->
@@ -454,6 +460,7 @@
     </div>
     <!-- End Row -->
   </div>
+  
   <!-- End Review Section -->
 
   <!-- Subscribe -->
