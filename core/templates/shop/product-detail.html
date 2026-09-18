@@ -52,13 +52,15 @@
       <div class="col-md-5">
         <div class="d-flex justify-content-between">
         <!-- Rating -->
-        <a class="d-flex gap-1 mb-4" href="#reviewSection">
-          <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-          <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-          <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-          <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-          <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-          <span class="ms-1">4.5/5</span>
+        <a class="d-flex gap-1 mb-4 star-rate" href="#reviewSection">
+          {% for i in "12345" %}
+              {% if i|add:0 <= object.avg_rate %}
+              <span><i class="bi bi-star-fill"></i></span>
+              {% else %}
+              <span><i class="bi bi-star"></i></span>
+              {% endif %}
+          {% endfor %}
+          <span class="ms-1">{{object.avg_rate}}/5</span>
         </a>
         <!-- End Rating -->
 
@@ -226,17 +228,19 @@
               <div class="d-flex justify-content-center">
                 <div class="d-flex align-items-center">
                   <div class="flex-shrink-0">
-                    <span class="display-4 text-white">4.7</span>
+                    <span class="display-4 text-white">{{object.avg_rate}}</span>
                   </div>
 
                   <div class="flex-grow-1 ms-3">
                     <!-- Rating -->
-                    <div class="d-flex gap-1 small">
-                      <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-                      <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-                      <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-                      <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-                      <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
+                    <div class="d-flex gap-1 small star-rate">
+                      {% for i in "12345" %}
+                          {% if i|add:0 <= object.avg_rate %}
+                          <span><i class="bi bi-star-fill"></i></span>
+                          {% else %}
+                          <span><i class="bi bi-star"></i></span>
+                          {% endif %}
+                      {% endfor %}
                     </div>
                     <!-- End Rating -->
                     <span class="text-white">{{reviews.count}} نظر</span>

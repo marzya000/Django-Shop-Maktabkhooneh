@@ -41,10 +41,6 @@ class ReviewModel(models.Model):
 def calculate_avg_review(sender,instance,created,**kwargs):
     if instance.status == ReviewStatusType.accepted.value:
         product = instance.product
-        average_rating = ReviewModel.objects.filter(
-        product=product, 
-        status=ReviewStatusType.accepted
-    ).aggregate(Avg('rate'))['rate__avg']
-        
+        average_rating = ReviewModel.objects.filter(product=product,status=ReviewStatusType.accepted).aggregate(Avg('rate'))['rate__avg']        
         product.avg_rate = round(average_rating,1)
         product.save()

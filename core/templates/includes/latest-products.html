@@ -44,14 +44,16 @@
           <div class="card-footer pt-0">
             <!-- Rating -->
             <a class="d-inline-flex align-items-center mb-3" href="#">
-              <div class="d-flex gap-1 ms-2">
-                <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-                <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-                <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-                <img src="{% static 'svg/illustrations/star.svg' %}" alt="Review rating" width="16" />
-                <img src="{% static 'svg/illustrations/star-muted.svg' %}" alt="Review rating" width="16" />
+              <div class="d-flex gap-1 ms-2 star-rate">
+                {% for i in "12345" %}
+                    {% if i|add:0 <= latest_product.avg_rate %}
+                    <span><i class="bi bi-star-fill"></i></span>
+                    {% else %}
+                    <span><i class="bi bi-star"></i></span>
+                    {% endif %}
+                {% endfor %}
               </div>
-              <span class="small">40</span>
+              <span class="ms-1">{{latest_product.avg_rate}}/5</span>
             </a>
             <!-- End Rating -->
 
