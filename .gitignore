@@ -128,7 +128,6 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env.*
 .env
 .venv
 env/
@@ -185,8 +184,3 @@ cython_debug/
 
 # ignore database files
 postgres/data/*
-
-
-#
-core/media/*
-!core/media/.gitkeep
