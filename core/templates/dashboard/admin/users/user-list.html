@@ -92,7 +92,7 @@
                                     </td>                            
                                     <td>
                                         <!-- <a class="btn btn-sm btn-icon btn-ghost-danger"><i class="bi-trash"></i></a> -->
-                                        <a class="btn btn-sm btn-icon btn-ghost-secondary" href="#"><i class="bi-pencil-square"></i></a>
+                                        <a class="btn btn-sm btn-icon btn-ghost-secondary" href="{% url 'dashboard:admin:user-edit' pk=object.pk %}"><i class="bi-pencil-square"></i></a>
                                     </td>
                                 </tr>
                             {% endfor %}
