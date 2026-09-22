@@ -49,7 +49,7 @@
             <a class="nav-link" href="{% url 'dashboard:admin:review-list' %}"><i class="bi-chat-square-text nav-icon"></i> نظرات</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="./admin-account-support.html"><i class="bi-envelope nav-icon"></i> تیکت ها</a>
+            <a class="nav-link" href="{% url 'dashboard:admin:contact-list' %}"><i class="bi-envelope nav-icon"></i> تیکت ها</a>
           </li>
         </ul>
 
@@ -61,7 +61,7 @@
             <a class="nav-link" href="{% url 'dashboard:admin:user-list' %}"><i class="bi-person nav-icon"></i> لیست کاربران</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="./admin-account-newsletter.html"><i class="bi-newspaper nav-icon"></i> خبرنامه</a>
+            <a class="nav-link" href="{% url 'dashboard:admin:newsletter-list' %}"><i class="bi-newspaper nav-icon"></i> خبرنامه</a>
           </li>
         </ul>
 

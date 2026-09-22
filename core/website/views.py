@@ -1,5 +1,10 @@
 from django.shortcuts import render
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView,CreateView
+from .models import ContactModel,NewsLetter
+from .forms import ContactForm, NewsLetterForm
+from django.contrib import messages
+from django.views.generic import CreateView
+from django.shortcuts import redirect
 
 
 class IndexView(TemplateView):
