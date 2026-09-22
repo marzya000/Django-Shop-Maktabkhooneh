@@ -18,19 +18,19 @@ from django.core import exceptions
 class NewsletterListView(LoginRequiredMixin, HasAdminAccessPermission, ListView):
     title = "لیست خبرنامه"
     template_name = "dashboard/admin/newsletters/newsletter-list.html"
-    paginate_by = 10
+    paginate_by = 5
     ordering = "-created_date"
 
     def get_paginate_by(self, queryset):
         """
         Paginate by specified value in querystring, or use default class property value.
         """
-        return self.request.GET.get('paginate_by', self.paginate_by)
+        return self.request.GET.get('page_size', self.paginate_by)
     
     def get_queryset(self):
         queryset = NewsLetter.objects.all().order_by("-created_date")
         search_query = self.request.GET.get('q', None)
-        ordering_query = self.request.GET.get('ordering', None)
+        ordering_query = self.request.GET.get('order_by', None)
 
         if search_query:
             queryset = queryset.filter(

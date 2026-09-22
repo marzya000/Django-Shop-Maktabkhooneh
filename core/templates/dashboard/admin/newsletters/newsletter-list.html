@@ -95,8 +95,6 @@
                                     </td>
                                 </tr>
                                 {% endfor %}
-
-
                             </tbody>
                         </table>
                     </div>
@@ -145,24 +143,14 @@
                                         </button>
                                     </li>
                                     {% endif %}
-
-                            </ul>
+                              </ul>
                         </nav>
                         {% endif %}
                         <!-- End Pagination -->
                     </div>
                     <!-- End Pagination -->
-
-
-
                 </div>
-
-
-
-
             </div>
-
-
         </div>
         <!-- End Tab Content -->
     </div>
@@ -195,6 +183,13 @@
         let new_url = window.location.pathname + "?" + current_url_params.toString()
         window.location.href = new_url
     });
-
+</script>
+<script>
+    function changePage(page_number){
+      let current_url_params = new URLSearchParams(window.location.search)
+      current_url_params.set("page",page_number)
+      let new_url = window.location.pathname + "?" + current_url_params.toString()
+      window.location.href = new_url
+    }
 </script>
 {% endblock %}
