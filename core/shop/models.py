@@ -46,9 +46,9 @@ class ProductModel(models.Model):
         return self.title
 
     def get_price(self):
-            discount_amount = self.price * Decimal(self.discount_percent / 100)
-            discounted_amount = self.price - discount_amount
-            return round(discounted_amount)
+        discount_amount = self.price * Decimal(self.discount_percent / 100)
+        discounted_amount = self.price - discount_amount
+        return round(discounted_amount)
 
     def get_show_price(self):
         discount_amount = self.price * Decimal(self.discount_percent / 100)
@@ -67,7 +67,7 @@ class ProductModel(models.Model):
 
 
 class ProductImageModel(models.Model):
-    product = models.ForeignKey(ProductModel,on_delete=models.CASCADE)
+    product = models.ForeignKey(ProductModel,on_delete=models.CASCADE,related_name="images")
     file = models.ImageField(upload_to="product/extra-img/")
 
     created_date = models.DateTimeField(auto_now_add=True)
