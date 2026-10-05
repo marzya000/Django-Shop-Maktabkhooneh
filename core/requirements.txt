@@ -1,6 +1,7 @@
 asgiref==3.12.1
 Django==4.2.30
 django-debug-toolbar==4.4.6
+django-ckeditor==6.7.3
 psycopg==3.2.13
 psycopg-binary==3.2.13
 python-decouple==3.8
